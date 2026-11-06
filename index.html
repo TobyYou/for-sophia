@@ -124,6 +124,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 .answers{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:70px}
 .btn-yes{font-size:1.2rem;padding:14px 28px}
 .btn-no{background:transparent;color:var(--muted);box-shadow:none;border:2px dashed var(--parch-edge-2);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.btn-no.gave-up{background:var(--mustard);color:var(--ink);border-color:transparent;box-shadow:0 4px 0 var(--mustard-deep)}
 .said-yes{text-align:center;font-family:var(--f-hand);font-size:1.6rem;color:var(--cow-brown);margin:6px 0 0}
 
 .days{margin-top:22px;display:grid;gap:16px}
@@ -623,16 +624,26 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 
   /* ---------- Yes / No ---------- */
   const yes = document.getElementById('yes'), no = document.getElementById('no');
-  const noLines = ['Are you sure?','The cow is sad','Try the other one','Nope, can’t click me'];
+  const noLines = ['Are you sure?','The cow is sad','Try the other one','Nope, can’t click me','Moooo… 😤'];
   let dodges = 0;
+  // Each attempt at "No" runs away with a new line. After the last line it gives up
+  // and becomes "Okay fine, yes", which she still has to tap herself.
   function dodge(){
+    if (no.classList.contains('gave-up')) return;
+    if (dodges >= noLines.length){
+      no.textContent = 'Okay fine, yes';
+      no.classList.add('gave-up');
+      no.style.transform = '';
+      return;
+    }
+    no.textContent = noLines[dodges++];
     if (reduce) return;
-    const dx = (Math.random()*2-1) * Math.min(120, innerWidth/4), dy = (Math.random()*2-1) * 30;
+    const dx = (Math.random()*2-1) * Math.min(110, innerWidth/4), dy = (Math.random()*2-1) * 28;
     no.style.transform = `translate(${dx}px,${dy}px) rotate(${(Math.random()*20-10)}deg)`;
-    no.textContent = noLines[dodges++ % noLines.length];
   }
-  no.addEventListener('pointerenter', dodge);
-  no.addEventListener('click', () => { no.textContent = 'Nice try. That counts as a yes.'; setTimeout(sayYes, 700); });
+  // Mouse: dodge on hover. Touch: hovering doesn't exist, so a tap dodges instead.
+  no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') dodge(); });
+  no.addEventListener('click', () => { if (no.classList.contains('gave-up')) sayYes(); else dodge(); });
   yes.addEventListener('click', sayYes);
   function revealDays(){
     document.getElementById('askBlock').hidden = true;
@@ -692,7 +703,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     document.getElementById('askBlock').hidden = false;
     document.getElementById('saidYes').hidden = true;
     document.getElementById('days').hidden = true;
-    no.style.transform = ''; no.textContent = 'No'; dodges = 0;
+    no.style.transform = ''; no.textContent = 'No'; no.classList.remove('gave-up'); dodges = 0;
     pass.value = ''; scrollTo({top:0});
   });
 
