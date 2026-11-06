@@ -1,0 +1,805 @@
+<title>Sophia's Magic Letter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Grandstander:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Layout: one centered stage over a starry night. Sealed envelope, then a letter that unfolds, then the weekend's tickets. */
+:root{
+  --night:#16122b; --night-2:#251d48; --night-3:#3a2f6b;
+  --star:#fff4d2; --mist:#cdc5ec;
+  --mustard:#e3b23f; --mustard-deep:#b8861f;
+  --parchment:#fbf3e1; --parch-2:#f4e7c8; --parch-edge:#e6d4ab; --parch-edge-2:#cdb582;
+  --ink:#3a2720; --muted:#6f5a4c; --cow-brown:#6e3b2f; --cow-white:#fffaf0;
+  --blue:#4c7fc0; --pink:#ef97ad; --aster:#8e7bd6; --wax:#6d2752;
+  --env-back:#e9d6ae; --env-front:#f3e5c3; --env-flap:#ead39f;
+  --f-display:"Grandstander","Comic Neue","Trebuchet MS",sans-serif;
+  --f-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --f-body:"Nunito","Avenir Next","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--night);color:var(--mist);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow-x:hidden}
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 40% at 50% 0%, rgb(142 123 214 / .28), transparent 70%),
+             radial-gradient(50% 35% at 50% 100%, rgb(227 178 63 / .12), transparent 70%)}
+main{position:relative;z-index:1;max-width:580px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.scene{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.eyebrow{font-family:var(--f-hand);font-size:1.45rem;line-height:1.2;color:var(--mustard);margin:0}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2.1rem,9vw,3rem);line-height:1.05;margin:0;color:var(--star);text-wrap:balance}
+h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;letter-spacing:.3em;color:var(--aster);margin-top:8px}
+
+/* Envelope */
+.env{position:relative;width:min(320px,82vw);max-width:100%;aspect-ratio:4/3;perspective:900px;margin-top:70px;animation:float 4.5s ease-in-out infinite}
+.env-back{position:absolute;inset:0;background:var(--env-back);border-radius:12px;box-shadow:0 24px 50px rgb(0 0 0 / .45)}
+.env-letter{position:absolute;left:7%;right:7%;top:8%;bottom:6%;z-index:1;background:var(--parchment);border-radius:6px;
+  padding:14px 16px;text-align:left;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.env-letter b{font-family:var(--f-hand);font-size:1.6rem;color:var(--blue);font-weight:700}
+.env-letter i{display:block;height:6px;margin-top:10px;border-radius:3px;background:var(--parch-edge)}
+.env-letter i:nth-of-type(2){width:80%}.env-letter i:nth-of-type(3){width:60%}
+.env-front{position:absolute;inset:0;z-index:2;background:var(--env-front);border-radius:12px;clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%)}
+.env-flap{position:absolute;left:0;right:0;top:0;height:62%;z-index:3;background:var(--env-flap);clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:top;border-radius:12px 12px 0 0;transition:transform .7s ease,z-index 0s linear .35s}
+.env.open .env-flap{transform:rotateX(180deg);z-index:0}
+.env.rise .env-letter{transform:translateY(-58%)}
+.env.open{animation:none}
+.seal{position:absolute;left:50%;top:60%;z-index:4;width:66px;height:66px;transform:translate(-50%,-50%);border-radius:50%;border:0;
+  background:radial-gradient(circle at 35% 30%,#a94b84,var(--wax) 70%);box-shadow:0 3px 0 #4a1636,0 8px 18px rgb(0 0 0 / .35);
+  display:grid;place-items:center;color:var(--mustard);font-family:var(--f-body);font-weight:700;font-size:1.25rem;transition:transform .4s,opacity .4s}
+.seal::after{content:"";position:absolute;inset:6px;border-radius:50%;border:2px dashed rgb(227 178 63 / .55)}
+.env.open .seal{transform:translate(-50%,-50%) scale(1.6);opacity:0}
+.env.locked-shake{animation:shake .45s}
+
+/* Lock form */
+.lock{width:100%;max-width:360px;display:grid;gap:10px;margin-top:6px}
+.lock label{font-family:var(--f-display);font-weight:700;font-size:1.1rem;color:var(--star)}
+.row{display:flex;gap:8px}
+.lock input{flex:1;min-width:0;font-family:var(--f-display);font-size:1.15rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;
+  padding:12px 14px;border-radius:16px;border:2px solid var(--night-3);background:var(--night-2);color:var(--star)}
+.lock input::placeholder{color:var(--night-3);letter-spacing:.1em}
+.lock input:focus{outline:none;border-color:var(--mustard);box-shadow:0 0 0 4px rgb(227 178 63 / .22)}
+.btn{font-family:var(--f-display);font-weight:800;font-size:1.05rem;border:0;border-radius:16px;padding:12px 20px;cursor:pointer;
+  background:var(--mustard);color:var(--ink);box-shadow:0 4px 0 var(--mustard-deep);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--mustard-deep)}
+.btn:focus-visible,.tab:focus-visible,.link:focus-visible{outline:3px solid var(--aster);outline-offset:3px}
+.hint{font-size:.95rem;margin:0;color:var(--mist)}
+.err{min-height:1.6em;margin:0;font-family:var(--f-hand);font-size:1.45rem;line-height:1.1;color:var(--pink)}
+.cow-row{display:flex;align-items:flex-end;justify-content:center;gap:4px;margin-top:6px}
+.cow{width:150px;height:auto;animation:bob 3s ease-in-out infinite}
+.bubble{position:relative;max-width:170px;background:var(--star);color:var(--ink);font-family:var(--f-hand);font-size:1.3rem;line-height:1.1;
+  padding:10px 12px;border-radius:16px 16px 4px 16px;margin-bottom:70px;text-align:left}
+.skyline{width:100%;max-width:440px;height:auto;margin-top:4px}
+.postmark{margin:-6px 0 0;font-family:var(--f-display);font-weight:700;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--aster)}
+.letter .skyline{max-width:100%;margin:22px 0 0;background:var(--night);border-radius:14px;padding:10px 8px 0}
+.stop .ico{position:absolute;left:-2px;top:0;width:26px;height:26px;border-radius:50%;background:var(--parch-2);border:2px solid var(--parch-edge-2);display:grid;place-items:center}
+.stop .ico svg{width:15px;height:15px;fill:none;stroke:var(--cow-brown);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stop.big .ico{left:8px;top:14px;background:var(--night-3);border-color:var(--aster)}
+.stop.big .ico svg{stroke:var(--star)}
+.warn{margin:6px 0 0;display:inline-block;padding:4px 10px;border-radius:10px;background:var(--pink);color:var(--ink);font-weight:700;font-size:.88rem}
+.seat{margin:10px 0 0;display:inline-block;padding:6px 12px;border:1.5px dashed var(--mustard);border-radius:10px;font-family:var(--f-display);font-weight:700;font-size:.9rem;letter-spacing:.04em;color:var(--star)}
+.ticket-btn{display:block;width:fit-content;margin-top:12px;text-decoration:none}
+.note.tiny{font-size:.8rem;margin-top:6px}
+.cow.grabbable{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.cow-body{position:fixed;left:0;top:0;z-index:40;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;will-change:transform}
+.cow-body.held{cursor:grabbing}
+.cow-body svg{width:100%;height:100%;animation:none;filter:drop-shadow(0 8px 10px rgb(0 0 0 / .3))}
+.moo{position:fixed;z-index:41;pointer-events:none;font-family:var(--f-display);font-weight:800;font-size:1.4rem;color:var(--star);
+  text-shadow:0 2px 0 var(--wax),0 0 10px rgb(0 0 0 / .4);transform:translate(-50%,-100%);animation:mooUp 1s ease-out forwards}
+@keyframes mooUp{to{opacity:0;transform:translate(-50%,-220%) scale(1.3)}}
+.bubble small{display:block;font-size:.85em;opacity:.75;margin-top:2px}
+#lock{transition:opacity .5s,transform .5s}
+#lock.leave{opacity:0;transform:translateY(-14px)}
+
+/* Unfold */
+#unfold{padding-top:40px}
+.tri{width:min(320px,82vw);perspective:1100px;display:flex;flex-direction:column}
+.tri div{height:118px;background:var(--parchment);border:1px solid var(--parch-edge);box-shadow:0 10px 30px rgb(0 0 0 / .3)}
+.tri .p1{transform-origin:bottom;transform:rotateX(178deg);animation:flat .9s .15s cubic-bezier(.3,.7,.2,1) forwards}
+.tri .p3{transform-origin:top;transform:rotateX(-178deg);animation:flat .9s .75s cubic-bezier(.3,.7,.2,1) forwards}
+.unfold-note{font-family:var(--f-hand);font-size:1.4rem;color:var(--mustard);margin:18px 0 0}
+
+/* Letter */
+.letter{position:relative;background:var(--parchment);color:var(--ink);border-radius:8px;padding:26px 22px 30px;text-align:left;
+  box-shadow:0 24px 70px rgb(0 0 0 / .5);animation:appear .7s cubic-bezier(.2,.8,.2,1) both;
+  background-image:radial-gradient(120% 80% at 0% 0%, rgb(230 212 171 / .35), transparent 60%),radial-gradient(100% 70% at 100% 100%, rgb(230 212 171 / .35), transparent 60%)}
+.letter-top{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.bouquet{width:250px;max-width:100%;height:auto}
+.kicker{font-family:var(--f-display);font-weight:700;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cow-brown);margin:0}
+.kicker span{color:var(--aster);letter-spacing:.3em}
+.dear{font-family:var(--f-hand);font-weight:700;font-size:2.4rem;line-height:1;margin:20px 0 8px;color:var(--blue)}
+.letter p{margin:0 0 12px;max-width:62ch}
+#askBlock{margin-top:22px;padding-top:6px;border-top:2px dashed var(--parch-edge)}
+.ask{margin:18px 0 12px;text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.55rem;line-height:1.15;color:var(--ink);text-wrap:balance}
+.answers{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:70px}
+.btn-yes{font-size:1.2rem;padding:14px 28px}
+.btn-no{background:transparent;color:var(--muted);box-shadow:none;border:2px dashed var(--parch-edge-2);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.said-yes{text-align:center;font-family:var(--f-hand);font-size:1.6rem;color:var(--cow-brown);margin:6px 0 0}
+
+.days{margin-top:22px;display:grid;gap:16px}
+.days h2{font-family:var(--f-display);font-weight:800;font-size:1.25rem;margin:0;text-align:center;color:var(--ink)}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tab{display:grid;gap:0;padding:10px 4px 9px;border-radius:16px;border:2px solid var(--parch-edge);background:var(--parch-2);color:var(--ink);
+  font-family:var(--f-display);font-weight:800;font-size:1.1rem;cursor:pointer;transition:transform .2s,background .2s}
+.tab small{font-family:var(--f-body);font-weight:600;font-size:.74rem;color:var(--muted)}
+.tab:hover{transform:translateY(-2px)}
+.tab[aria-selected="true"]{background:var(--night-2);border-color:var(--night-2);color:var(--star);transform:translateY(-3px)}
+.tab[aria-selected="true"] small{color:var(--mustard)}
+.panel-head{margin:0 0 14px}
+.panel-head h3{font-family:var(--f-display);font-weight:800;font-size:1.35rem;margin:0;color:var(--ink)}
+.panel-head p{margin:0;color:var(--muted);font-size:.95rem}
+.tl{list-style:none;margin:0;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:10px;top:10px;bottom:24px;border-left:2px dotted var(--parch-edge-2)}
+.stop{position:relative;padding:0 0 18px 36px;animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.time{font-family:var(--f-display);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-variant-numeric:tabular-nums}
+.stop h4{font-family:var(--f-display);font-weight:800;font-size:1.12rem;line-height:1.2;margin:2px 0 0;color:var(--ink)}
+.place{font-weight:700;color:var(--cow-brown);margin:1px 0 0}
+.note{font-size:.94rem;color:var(--muted);margin:2px 0 0}
+.map{display:inline-block;margin-top:4px;font-size:.85rem;font-weight:700;color:var(--blue);text-decoration:none;border-bottom:1.5px solid currentColor}
+.stop.big{margin:4px 0 18px 26px;padding:14px 16px 14px 36px;border-radius:16px;background:var(--night-2);color:var(--mist)}
+.stop.big h4{color:var(--star)}.stop.big .place{color:var(--mustard)}.stop.big .note{color:var(--mist)}.stop.big .time{color:var(--aster)}.stop.big .map{color:var(--star)}
+.sealed{display:grid;justify-items:center;gap:10px;text-align:center;padding:18px 8px 8px}
+.padlock{position:relative;width:92px;height:110px;border:0;background:none;cursor:pointer;padding:0;animation:wobble 2.6s ease-in-out infinite;transform-origin:50% 30%}
+.padlock svg{width:100%;height:100%;filter:drop-shadow(0 6px 10px rgb(58 39 32 / .25))}
+.padlock .shackle{animation:tug 2.6s ease-in-out infinite}
+.padlock.jiggle{animation:shake .45s}
+.padlock:focus-visible{outline:3px solid var(--aster);outline-offset:4px;border-radius:12px}
+.spark{position:absolute;color:var(--aster);font-size:14px;animation:twinkle 1.8s ease-in-out infinite}
+.spark.s1{left:-8px;top:30px}.spark.s2{right:-10px;top:14px;animation-delay:.6s}.spark.s3{right:-4px;bottom:16px;animation-delay:1.2s;color:var(--mustard)}
+@keyframes tug{0%,70%,100%{transform:translateY(0)}80%{transform:translateY(-5px)}90%{transform:translateY(0)}}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.1)}}
+.tab.locked small::after{content:" · locked"}
+.sealed p{margin:0;color:var(--muted)}
+.packing{margin-top:6px;padding:14px 16px;border:2px dashed var(--parch-edge-2);border-radius:16px}
+.packing h4{font-family:var(--f-display);font-weight:800;margin:0 0 4px;font-size:1rem}
+.packing ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem}
+.sign{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:14px 0 6px}
+.sign p{margin:0;font-family:var(--f-hand);font-size:1.7rem;line-height:1.1;color:var(--blue)}
+.sign .cow{width:110px}
+.link{background:none;border:0;color:var(--mist);font:inherit;font-size:.9rem;text-decoration:underline;cursor:pointer;margin:22px auto 0;display:block}
+
+/* Bursts */
+.fx{position:fixed;z-index:50;pointer-events:none;font-size:20px;line-height:1;animation:fly 1.2s cubic-bezier(.15,.7,.3,1) forwards}
+
+@keyframes float{50%{transform:translateY(-8px) rotate(-1deg)}}
+@keyframes bob{50%{transform:translateY(-4px) rotate(2deg)}}
+@keyframes wobble{50%{transform:rotate(-8deg) scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@keyframes flat{to{transform:rotateX(0)}}
+@keyframes appear{from{opacity:0;transform:translateY(16px) scale(.97)}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fly{0%{transform:translate(-50%,-50%) scale(.4);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1) rotate(var(--r));opacity:0}}
+@keyframes bloom{from{transform:scale(0) rotate(-40deg)}}
+.fl{transform-box:fill-box;transform-origin:center;animation:bloom .8s cubic-bezier(.3,1.5,.5,1) both}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (max-width:380px){.cow-row .cow{width:120px}.bubble{font-size:1.15rem}}
+</style>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+
+<main>
+  <!-- 1. Sealed envelope -->
+  <section id="lock" class="scene">
+    <p class="eyebrow">The owls were busy, so a cow delivered this.</p>
+    <h1>A letter for Sophia<span class="zh">魔法世界</span></h1>
+
+    <div class="env" id="env">
+      <div class="env-back"></div>
+      <div class="env-letter"><b>Dear Sophia,</b><i></i><i></i><i></i></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <button class="seal" id="seal" type="button" aria-label="Wax seal. Type the magic word below to open it.">S</button>
+    </div>
+
+    <form class="lock" id="lockForm" autocomplete="off">
+      <label for="pass">Say the magic word to break the seal</label>
+      <div class="row">
+        <input id="pass" name="pass" type="text" placeholder="✦ ✦ ✦" autocapitalize="characters" spellcheck="false" aria-describedby="hint err">
+        <button class="btn" type="submit">Unlock</button>
+      </div>
+      <p class="hint" id="hint">Hint: if you ask a cow, he will literally tell you the passcode.</p>
+      <p class="err" id="err" aria-live="polite"></p>
+    </form>
+
+    <div class="cow-row" aria-hidden="true">
+      <div class="bubble">psst… say it like I would<small>(also, you can throw me)</small></div>
+      <svg class="cow" viewBox="0 -24 230 176"><use href="#cowArt"/></svg>
+    </div>
+    <svg class="skyline" viewBox="0 0 400 150" aria-hidden="true"><use href="#nashArt"/></svg>
+    <p class="postmark">Postmarked Nashville, TN · Music City</p>
+  </section>
+
+  <!-- 2. Letter unfolding -->
+  <section id="unfold" class="scene" hidden aria-hidden="true">
+    <div class="tri"><div class="p1"></div><div class="p2"></div><div class="p3"></div></div>
+    <p class="unfold-note">unfolding…</p>
+  </section>
+
+  <!-- 3. The letter -->
+  <section id="letterWrap" hidden>
+    <article class="letter" id="letter">
+      <div class="letter-top">
+        <svg class="bouquet" id="bouquet" viewBox="-24 -34 306 298" role="img" aria-label="An autumn bouquet of golden beech leaves, ferns, sunflowers, daisies and purple asters"></svg>
+        <p class="kicker">A magical weekend invitation <span>· 魔法约会 ·</span></p>
+      </div>
+
+      <p class="dear">Dear Sophia,</p>
+      <p>By the power of this extremely official, cow-delivered letter (not legally binding, but very bonding), you are hereby summoned to a magical weekend in Music City, Nashville.</p>
+      <p>I have planned everything down to the minute, except the parts where I look at you and forget what we were doing.</p>
+      <p>Side effects may include: laughing too much, eating too much, and liking me even more than you already do.</p>
+
+      <div class="sign">
+        <p>Yours, big time,<br>Toto</p>
+        <svg class="cow" viewBox="0 -24 230 176" aria-hidden="true"><use href="#cowArt"/></svg>
+      </div>
+      <div id="askBlock">
+        <p class="ask">Will you be my date this weekend?</p>
+        <div class="answers" id="answers">
+          <button class="btn btn-yes" id="yes" type="button">Yes!</button>
+          <button class="btn btn-no" id="no" type="button">No</button>
+        </div>
+      </div>
+      <p class="said-yes" id="saidYes" hidden>She said yes. The cow is thrilled.</p>
+
+      <div class="days" id="days" hidden>
+        <h2>Tap a day to see the plan</h2>
+        <div class="tabs" role="tablist" aria-label="Weekend days">
+          <button class="tab" role="tab" id="tab-fri" aria-controls="panel" aria-selected="true">Friday<small>Nov 6</small></button>
+          <button class="tab" role="tab" id="tab-sat" aria-controls="panel" aria-selected="false" tabindex="-1">Saturday<small>Nov 7</small></button>
+          <button class="tab" role="tab" id="tab-sun" aria-controls="panel" aria-selected="false" tabindex="-1">Sunday<small>Nov 8</small></button>
+        </div>
+        <div id="panel" role="tabpanel" aria-labelledby="tab-fri"></div>
+      </div>
+
+      <svg class="skyline" viewBox="0 0 400 150" aria-hidden="true"><use href="#nashArt"/></svg>
+    </article>
+    <button class="link" id="replay" type="button">Seal it again and replay</button>
+  </section>
+</main>
+
+<!-- Cow art: white with brown spots, pink snout, tiny wizard hat -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="nashArt">
+      <!-- moon + notes -->
+      <circle cx="338" cy="26" r="15" fill="#fff4d2"/><circle cx="345" cy="21" r="14" fill="#16122b"/>
+      <g fill="#e3b23f"><ellipse cx="60" cy="40" rx="5" ry="4"/><rect x="64" y="20" width="2" height="21"/><path d="M66 20 q8 4 6 12 q-2 -6 -6 -6z"/>
+      <ellipse cx="292" cy="56" rx="4.5" ry="3.5"/><rect x="295.5" y="38" width="2" height="19"/><ellipse cx="306" cy="52" rx="4.5" ry="3.5"/><rect x="309.5" y="34" width="2" height="19"/><rect x="295.5" y="34" width="16" height="3"/></g>
+      <!-- back buildings -->
+      <g fill="#2b2253"><rect x="20" y="92" width="40" height="58" rx="3"/><rect x="64" y="76" width="34" height="74" rx="3"/><rect x="250" y="70" width="38" height="80" rx="3"/><rect x="292" y="88" width="44" height="62" rx="3"/><rect x="340" y="98" width="44" height="52" rx="3"/></g>
+      <!-- Batman tower: two pointed spires -->
+      <path d="M176 150 V58 L180 18 L186 50 H214 L220 18 L224 58 V150 Z" fill="#3a2f6b"/>
+      <rect x="186" y="50" width="28" height="6" fill="#4a3d85"/>
+      <g fill="#e3b23f" opacity=".85"><rect x="184" y="66" width="5" height="6"/><rect x="197" y="66" width="5" height="6"/><rect x="210" y="66" width="5" height="6"/><rect x="184" y="82" width="5" height="6"/><rect x="210" y="82" width="5" height="6"/><rect x="197" y="98" width="5" height="6"/><rect x="184" y="114" width="5" height="6"/><rect x="210" y="114" width="5" height="6"/><rect x="197" y="130" width="5" height="6"/></g>
+      <!-- mid buildings -->
+      <g fill="#332a62"><rect x="104" y="90" width="30" height="60" rx="3"/><rect x="138" y="70" width="32" height="80" rx="3"/><rect x="230" y="96" width="24" height="54" rx="3"/></g>
+      <g fill="#e3b23f" opacity=".7"><rect x="144" y="80" width="4" height="5"/><rect x="158" y="80" width="4" height="5"/><rect x="144" y="96" width="4" height="5"/><rect x="158" y="112" width="4" height="5"/><rect x="72" y="88" width="4" height="5"/><rect x="86" y="104" width="4" height="5"/><rect x="258" y="82" width="4" height="5"/><rect x="274" y="98" width="4" height="5"/><rect x="302" y="100" width="4" height="5"/><rect x="320" y="116" width="4" height="5"/></g>
+      <!-- guitar leaning on the left -->
+      <g transform="rotate(-18 30 120)">
+        <rect x="27" y="62" width="6" height="44" rx="2" fill="#6e3b2f"/><rect x="25" y="56" width="10" height="10" rx="2" fill="#3a2720"/>
+        <circle cx="30" cy="118" r="11" fill="#e3b23f"/><circle cx="30" cy="134" r="14" fill="#e3b23f"/><circle cx="30" cy="124" r="4" fill="#3a2720"/>
+      </g>
+      <!-- candle on the right -->
+      <rect x="364" y="112" width="18" height="30" rx="4" fill="#fbf3e1"/><rect x="372" y="104" width="2" height="9" fill="#3a2720"/>
+      <path d="M373 90 q7 9 0 15 q-7 -6 0 -15z" fill="#f39a3a"/><path d="M373 96 q3 4 0 7 q-3 -3 0 -7z" fill="#fff4d2"/>
+      <rect x="0" y="146" width="400" height="4" fill="#2b2253"/>
+    </g>
+    <g id="cowArt">
+      <path d="M42 58 C26 66 22 84 26 100" fill="none" stroke="#fffaf0" stroke-width="5" stroke-linecap="round"/>
+      <path d="M20 98 q6 -4 12 0 l-4 14 z" fill="#6e3b2f"/>
+      <rect x="54" y="100" width="17" height="42" rx="6" fill="#fffaf0"/>
+      <rect x="78" y="100" width="17" height="42" rx="6" fill="#fffaf0"/>
+      <rect x="132" y="100" width="17" height="42" rx="6" fill="#fffaf0"/>
+      <rect x="156" y="100" width="17" height="42" rx="6" fill="#fffaf0"/>
+      <rect x="54" y="134" width="17" height="9" rx="3" fill="#6e3b2f"/><rect x="78" y="134" width="17" height="9" rx="3" fill="#6e3b2f"/>
+      <rect x="132" y="134" width="17" height="9" rx="3" fill="#6e3b2f"/><rect x="156" y="134" width="17" height="9" rx="3" fill="#6e3b2f"/>
+      <rect x="38" y="46" width="146" height="70" rx="34" fill="#fffaf0"/>
+      <path d="M62 48 q22 -6 32 8 q-4 16 -24 12 q-14 -6 -8 -20z" fill="#6e3b2f"/>
+      <ellipse cx="112" cy="110" rx="24" ry="8" fill="#6e3b2f"/>
+      <ellipse cx="150" cy="70" rx="11" ry="15" fill="#6e3b2f"/>
+      <ellipse cx="48" cy="86" rx="7" ry="11" fill="#6e3b2f"/>
+      <path d="M96 114 q10 12 20 0 z" fill="#ef97ad"/>
+      <ellipse cx="164" cy="26" rx="13" ry="6" transform="rotate(-25 164 26)" fill="#fffaf0"/>
+      <ellipse cx="216" cy="26" rx="13" ry="6" transform="rotate(25 216 26)" fill="#fffaf0"/>
+      <rect x="164" y="16" width="52" height="58" rx="23" fill="#fffaf0"/>
+      <ellipse cx="200" cy="32" rx="11" ry="10" fill="#6e3b2f"/>
+      <circle cx="181" cy="40" r="3.6" fill="#3a2720"/><circle cx="200" cy="40" r="3.6" fill="#fffaf0"/><circle cx="200" cy="40" r="3" fill="#3a2720"/>
+      <ellipse cx="173" cy="54" rx="5" ry="3" fill="#ef97ad" opacity=".55"/><ellipse cx="208" cy="54" rx="5" ry="3" fill="#ef97ad" opacity=".55"/>
+      <rect x="170" y="56" width="42" height="26" rx="13" fill="#ef97ad"/>
+      <ellipse cx="183" cy="69" rx="3.5" ry="5" fill="#c9607b"/><ellipse cx="199" cy="69" rx="3.5" ry="5" fill="#c9607b"/>
+      <path d="M172 18 L194 -22 L212 18 Z" fill="#8e7bd6"/>
+      <ellipse cx="192" cy="18" rx="28" ry="5" fill="#6d5bb8"/>
+      <path d="M193 -6 l2 5 5 1 -4 3 1 5 -4 -3 -4 3 1 -5 -4 -3 5 -1z" fill="#e3b23f"/>
+    </g>
+  </defs>
+</svg>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+    del(k){ try { localStorage.removeItem(k); } catch(e){} }
+  };
+
+  /* ---------- Stars ---------- */
+  const cv = document.getElementById('stars'), cx = cv.getContext('2d');
+  let stars = [], W = 0, H = 0;
+  function size(){
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * d; cv.height = H * d; cx.setTransform(d,0,0,d,0,0);
+    stars = Array.from({length: Math.round(W*H/5200)}, () => ({
+      x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.4+.3,
+      p: Math.random()*Math.PI*2, s: Math.random()*.02+.006, g: Math.random() < .12
+    }));
+  }
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    for (const s of stars){
+      s.p += s.s;
+      const a = reduce ? .7 : .35 + .65*Math.abs(Math.sin(s.p));
+      cx.globalAlpha = a;
+      cx.fillStyle = s.g ? '#e3b23f' : '#fff4d2';
+      cx.beginPath(); cx.arc(s.x,s.y,s.r,0,7); cx.fill();
+    }
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  size(); draw(); addEventListener('resize', () => { size(); if (reduce) draw(); });
+
+  /* ---------- Bursts ---------- */
+  function burst(x, y, chars, n){
+    if (reduce) return;
+    for (let i=0;i<n;i++){
+      const e = document.createElement('span');
+      e.className = 'fx';
+      e.textContent = chars[i % chars.length];
+      const a = Math.random()*Math.PI*2, d = 60 + Math.random()*120;
+      e.style.left = x+'px'; e.style.top = y+'px';
+      e.style.setProperty('--dx', Math.cos(a)*d+'px');
+      e.style.setProperty('--dy', Math.sin(a)*d - 40 +'px');
+      e.style.setProperty('--r', (Math.random()*360-180)+'deg');
+      e.style.fontSize = (14 + Math.random()*16)+'px';
+      e.style.animationDelay = (Math.random()*.15)+'s';
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 1500);
+    }
+  }
+  const centerOf = el => { const r = el.getBoundingClientRect(); return [r.left + r.width/2, r.top + r.height/2]; };
+
+  /* ---------- Bouquet ---------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('bouquet');
+  const mk = (tag, attrs, parent=svg) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  function buildBouquet(){
+    svg.innerHTML = '';
+    const R = (a,b) => a + Math.random()*(b-a);
+    const qpt = (x0,y0,cx,cy,x1,y1,t) => { const u=1-t; return [u*u*x0+2*u*t*cx+t*t*x1, u*u*y0+2*u*t*cy+t*t*y1, Math.atan2(2*u*(cy-y0)+2*t*(y1-cy), 2*u*(cx-x0)+2*t*(x1-cx))*180/Math.PI]; };
+
+    // golden beech: big oval leaves with parallel veins, alternating along the stem
+    const GOLD = ['#e9a536','#f2b84a','#dd9227','#f5c25a','#e39a2e'];
+    const beech = (x0,y0,cx,cy,x1,y1,n,size,delay) => {
+      const g = mk('g', {class:'fl', style:`animation-delay:${delay}s`});
+      mk('path', {d:`M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}`, stroke:'#7a4a22', 'stroke-width':1.6, fill:'none'}, g);
+      for (let i=1;i<=n;i++){
+        const t = .18 + .82*i/n, [px,py,ang] = qpt(x0,y0,cx,cy,x1,y1,t);
+        const side = i%2 ? 1 : -1, L = size*1.5*(1-.2*t), W = L*.5;
+        const lf = mk('g', {transform:`translate(${px} ${py}) rotate(${ang + (i===n?0:side*42)})`}, g);
+        mk('path', {d:`M0 0 Q${L*.35} ${-W} ${L} 0 Q${L*.35} ${W} 0 0 Z`, fill:GOLD[(i+Math.round(size))%GOLD.length]}, lf);
+        mk('path', {d:`M1 0 L${L-2} 0`, stroke:'#b8741c', 'stroke-width':.8, fill:'none'}, lf);
+        for (let v=1; v<=4; v++){ const vx=L*v/5.4, vw=W*.75*(1-Math.abs(v-2)/4.5);
+          mk('path', {d:`M${vx} 0 L${vx+L*.12} ${-vw} M${vx} 0 L${vx+L*.12} ${vw}`, stroke:'#c9811f', 'stroke-width':.6, fill:'none', opacity:.8}, lf); }
+      }
+    };
+    beech(112,150, 96,80, 100,4, 10, 30, .05);     // tall branch, up the middle-left
+    beech(104,150, 74,104, 58,52, 6, 26, .1);      // upper left
+    beech(100,152, 56,128, 10,118, 6, 26, .15);    // low left
+    beech(126,148, 150,96, 152,48, 6, 26, .12);    // up center-right
+    beech(130,148, 176,78, 214,40, 10, 32, .08);    // big upper right spray
+    beech(134,150, 196,104, 248,104, 10, 32, .14);  // wide right spray
+    beech(136,154, 204,138, 244,172, 6, 28, .2);   // drooping lower right
+
+    // dark green leatherleaf ferns, low on both sides
+    const fern = (x0,y0,cx,cy,x1,y1,delay) => {
+      const g = mk('g', {class:'fl', style:`animation-delay:${delay}s`});
+      mk('path', {d:`M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}`, stroke:'#3e6328', 'stroke-width':1.5, fill:'none'}, g);
+      const n = 15;
+      for (let i=1;i<n;i++){
+        const [px,py,ang] = qpt(x0,y0,cx,cy,x1,y1,i/n), len = 15*(1-.7*i/n);
+        [-1,1].forEach(sd => mk('path', {d:`M0 0 Q${len*.5} ${-2.6} ${len} 0 Q${len*.5} 2.6 0 0 Z`, fill: i%2 ? '#3f6b2a' : '#4f7d34',
+          transform:`translate(${px} ${py}) rotate(${ang + sd*58})`}, g));
+      }
+    };
+    fern(160,146, 204,146, 230,194, .3);
+    fern(150,140, 190,122, 228,124, .34);
+    fern(84,142, 48,138, 14,166, .32);
+    fern(90,148, 58,156, 34,186, .36);
+
+    // small green filler + yellow solidago
+    const fill = mk('g', {class:'fl', style:'animation-delay:.4s'});
+    for (let i=0;i<60;i++) mk('circle', {cx:R(60,176), cy:R(96,140), r:R(1.6,3.2), fill: i%3 ? '#5e8a3c' : '#7aa04c'}, fill);
+    const sol = mk('g', {class:'fl', style:'animation-delay:.45s'});
+    for (let i=0;i<60;i++) mk('circle', {cx:R(50,92), cy:R(92,134), r:R(1,1.8), fill: i%2 ? '#c9c84a' : '#e0d65a'}, sol);
+
+    // white stock: spikes of little white blossoms
+    const stock = (x0,y0,x1,y1,delay) => {
+      const g = mk('g', {class:'fl', style:`animation-delay:${delay}s`});
+      mk('path', {d:`M${x0} ${y0} L${x1} ${y1}`, stroke:'#6f9a48', 'stroke-width':1.4}, g);
+      for (let i=0;i<9;i++){ const t=i/8, x=x0+(x1-x0)*t+R(-4,4), y=y0+(y1-y0)*t;
+        mk('circle', {cx:x, cy:y, r:4.2-t*1.8, fill:'#fffdf6', stroke:'#e7e2d2', 'stroke-width':.6}, g);
+        mk('circle', {cx:x, cy:y, r:.9, fill:'#d9d39a'}, g); }
+    };
+    stock(66,140, 46,96, .5);
+    stock(116,124, 112,82, .55);
+    stock(148,124, 154,90, .6);
+
+    // bunny tail grass
+    [[104,92,-8],[132,66,10],[148,108,18]].forEach(([x,y,r],i) => {
+      const g = mk('g', {class:'fl', style:`animation-delay:${.55+i*.08}s`});
+      mk('path', {d:`M120 148 Q${(120+x)/2} ${(148+y)/2+8} ${x} ${y+9}`, stroke:'#a3a873', 'stroke-width':1.2, fill:'none'}, g);
+      mk('ellipse', {cx:x, cy:y, rx:4.2, ry:10, fill:'#fbf6e8', transform:`rotate(${r} ${x} ${y})`}, g);
+    });
+
+    // flowers: petals radiating from a center
+    const flower = (x,y,petals,len,wid,col,center,cr,delay) => {
+      const g = mk('g', {class:'fl', style:`animation-delay:${delay}s`});
+      for (let i=0;i<petals;i++) mk('ellipse', {cx:x, cy:y-len, rx:wid, ry:len, fill:col, transform:`rotate(${360/petals*i} ${x} ${y})`}, g);
+      mk('circle', {cx:x, cy:y, r:cr, fill:center}, g);
+      return g;
+    };
+    // sunflowers (golden-orange, slightly uneven petals)
+    flower(80,122,18,15,4.6,'#f0a21e','#6a5a1c',7,.7);  flower(80,122,18,10,3.4,'#f7bf33','#6a5a1c',7,.72);
+    flower(102,108,18,13,4.2,'#f3ae28','#6a5a1c',6,.76); flower(102,108,18,9,3.2,'#f8c63e','#6a5a1c',6,.78);
+    // white daisies
+    flower(128,116,16,17,4.2,'#fffdf6','#a7b43a',6.5,.84);
+    flower(156,128,16,14,3.6,'#fffaf0','#a7b43a',5.5,.9);
+    flower(108,136,14,11,3.2,'#fffdf6','#a7b43a',4.5,.94);
+    // purple asters, lower right
+    flower(162,148,24,10,2,'#8f7ad6','#5a4aa8',3.4,1.0);
+    flower(180,138,24,9.5,1.9,'#9d8be0','#5a4aa8',3.2,1.05);
+    flower(178,156,24,9,1.8,'#8471cf','#5a4aa8',3,1.1);
+
+    // kraft paper cone, a little lopsided like the real one
+    mk('path', {d:'M30 146 L208 158 Q146 206 128 226 L110 226 Q84 196 30 146 Z', fill:'#c49b6c'});
+    mk('path', {d:'M30 146 L92 141 Q108 196 118 226 L110 226 Q84 196 30 146 Z', fill:'#d4ae80'});
+    mk('path', {d:'M92 141 Q108 196 118 226', stroke:'#b08454', 'stroke-width':1, fill:'none'});
+    // gathered handle under the tie
+    mk('path', {d:'M110 224 L128 224 L131 256 Q119 259 107 256 Z', fill:'#bf9566'});
+    mk('path', {d:'M110 224 L119 224 L118 258 Q112 257 107 256 Z', fill:'#cda476'});
+    [[114,232,113,253],[123,232,124,254],[127,232,129,252]].forEach(([a,b,c,d]) => mk('path', {d:`M${a} ${b} L${c} ${d}`, stroke:'#a07a50', 'stroke-width':.9}));
+    // twine wrapped around the neck, with a little bow
+    const tw = {fill:'none', stroke:'#7a5a38', 'stroke-width':1.7, 'stroke-linecap':'round'};
+    mk('path', {...tw, d:'M108 224 Q119 227 130 224'});
+    mk('path', {...tw, d:'M108 228 Q119 231 130 228'});
+    mk('path', {...tw, d:'M108 232 Q119 235 130 232'});
+    mk('path', {...tw, d:'M119 228 C109 218 99 222 106 229 C110 233 116 231 119 228'});
+    mk('path', {...tw, d:'M119 228 C129 218 139 222 132 229 C128 233 122 231 119 228'});
+    mk('path', {...tw, d:'M119 229 Q114 238 109 246'});
+    mk('path', {...tw, d:'M119 229 Q124 239 130 245'});
+    mk('circle', {cx:119, cy:228.5, r:2.4, fill:'#7a5a38'});
+    // sticker
+    mk('circle', {cx:124, cy:186, r:12, fill:'#fffaf0', stroke:'#b8956a', 'stroke-width':1});
+  }
+
+  /* ---------- Sealed ticket: the link is stored encrypted, and only a correct passcode decrypts it ---------- */
+  const VAULT = {"MOO":["Qq5ro0IXXcT6Hrkr+W6jKQ==","OgcgTN0kQG120no5","ObX0j8sECzddOVf1xZ4BoGwyun6am+Sxl9XYOWe8Wnq6SCPpXtTqs/km+db3VtsEuf2taKednMwO6epwegjMiN55mPwM14NKEKpEjE09EZdiZPIN3H8GFcl+EtE003I="],"ILOVETOTO":["0Vy1k1xCb/qiPS5VQYbMRQ==","5oKX8P5k2dPjtvXc","0eyStqYpngG0eS2dEVRUXDrK7seMm2EOJ88rhMK1RXtW/X3jij1ldNGUtcL8EjiAd3BD165/OdNjFHJuow143tf3Ljg227EWf9RBGEQZKFDIK7Zmm6x8m/E3zhlrYSA="],"BIGTIME":["Hd+sWfMtAhFUR1rnjQmBmw==","IWfA7yYR8Ob98ob9","YogKCgHJe/xK9NpDGGrZ2jNENocKs2reyZPg/fp2SVFQ2UU9rVndxv8TOgGgcHk6EeE4VTMLAhU9M+bDl8LldgqZYi1XKfdBJoJKPX64fFZSkjc4CHGjwn4xNJ2uheM="]};
+  let ticketURL = null, currentDay = 'fri';
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  function canonical(v){
+    if (/^MO{2,}$/.test(v)) return 'MOO';
+    if (/^ILO+VE(YOU|U)?TOTO$/.test(v)) return 'ILOVETOTO';
+    if (/^(THANKYOU)?BIGTIME$/.test(v)) return 'BIGTIME';
+    return null;
+  }
+  async function openVault(key){
+    try {
+      const [salt, iv, ct] = VAULT[key].map(unb64);
+      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'PBKDF2', false, ['deriveKey']);
+      const k = await crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:200000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+      ticketURL = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv}, k, ct));
+      if (!document.getElementById('days').hidden) renderDay(currentDay);
+    } catch(e){ ticketURL = null; }
+  }
+
+  /* ---------- Itinerary ---------- */
+  const ICONS = {
+    coffee:'<path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 11h2a2 2 0 0 1 0 4h-2"/><path d="M8 3c0 2 2 2 2 4M12 3c0 2 2 2 2 4"/>',
+    book:'<path d="M4 5h7v15H4zM13 5h7v15h-7z"/><path d="M6 9h3M15 9h3"/>',
+    bowl:'<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 3l2 7M15 3l-2 7"/>',
+    candle:'<rect x="8" y="10" width="8" height="11" rx="1.5"/><path d="M12 10V8"/><path d="M12 2c2 2.5 2 4 0 5.5C10 6 10 4.5 12 2z"/>',
+    tree:'<path d="M12 21v-6"/><path d="M12 3l6 9H6z"/><path d="M12 8l5 7H7z"/>',
+    plate:'<circle cx="12" cy="13" r="7"/><circle cx="12" cy="13" r="3"/><path d="M3 4v6M21 4v16"/>',
+    ticket:'<path d="M3 8a2 2 0 0 0 0 4v4h18v-4a2 2 0 0 1 0-4V4H3z"/><path d="M14 4v12"/>',
+    wand:'<path d="M4 20L15 9"/><path d="M18 2l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>',
+    moon:'<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>',
+    paw:'<circle cx="12" cy="16" r="4"/><circle cx="6" cy="10" r="2"/><circle cx="10" cy="6" r="2"/><circle cx="14" cy="6" r="2"/><circle cx="18" cy="10" r="2"/>',
+    guitar:'<circle cx="9" cy="15" r="5"/><path d="M12 12l8-8M18 2l4 4"/>'
+  };
+  const map = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  const DAYS = {
+    fri: {
+      title: 'Friday, November 6',
+      sub: 'The big day of magic, from first coffee to the last note.',
+      stops: [
+        {i:'coffee', t:'8:00 – 10:00 AM', h:'Morning Potion', p:'A Andrews Bakery', n:'Breakfast and coffee together to start the day.', m:'A Andrews Bakery Nashville'},
+        {i:'book', t:'10:00 AM – before noon', h:'Charms Class: AI Friday', p:'Back on campus', n:'You get to meet Dr. Spencer-Smith, a really cool professor. We will not stay all the way to 12.'},
+        {i:'bowl', t:'12:30 PM', h:'The Great Lunch', p:'Baby Chan', n:'Table booked. Refuel before we make things with our hands.', m:'Baby Chan Nashville'},
+        {i:'candle', t:'2:00 – 3:00 PM', h:'Candle Conjuring', p:'Paddywax Candle Bar, Berry Hill', n:'An hour-long, instructor-led candle making workshop. We pick our scents and pour our own.', warn:'Be there by 1:50 PM. They want us 10 minutes early!', m:'Paddywax Candle Bar Berry Hill Nashville'},
+        {i:'guitar', t:'3:00 PM onward', h:'Wandering Hours', p:'Around Berry Hill', n:'While our candles set, we wander around Berry Hill and see what we find.'},
+        {i:'plate', t:'Early evening', h:'Supper Quest', p:'Dinner somewhere good', n:'A proper dinner before the show.'},
+        {i:'ticket', t:'7:00 PM', h:'Arrive at the Hall', p:'Schermerhorn Symphony Center', n:'Grab a drink, take a photo, find our seats.', m:'Schermerhorn Symphony Center Nashville'},
+        {i:'wand', t:'7:30 – about 10:15 PM', h:'The Main Spell', p:'Harry Potter and the Prisoner of Azkaban in Concert', n:'A full orchestra plays the film live. About 2 hours 45 minutes.', seat:'Orchestra · Row K · Seat 14 · Door 2', cta:{ticket:true, label:'Accept your ticket'}, big:true},
+        {i:'moon', t:'Around 10:20 PM', h:'Midnight Snack', p:'Somewhere local', n:'A late bite while we talk about our favorite parts.'}
+      ]
+    },
+    sat: {
+      sealed: true, // set to false to unlock
+      title: 'Saturday, November 7',
+      sub: 'Lock-in day, with snacks.',
+      stops: [
+        {t:'Daytime', i:'book', h:'Study Spells', p:'Lock-in mode', n:'We get our work done, side by side.'},
+        {t:'Meals', i:'bowl', h:'Food Quests', p:'Somewhere good in Nashville', n:'We go out to eat at a few places. You get a vote on where.'}
+      ]
+    },
+    sun: {
+      sealed: true, // set to false to unlock
+      title: 'Sunday, November 8',
+      sub: 'A wild day out.',
+      stops: [
+        {i:'paw', t:'Daytime', h:'Magical Creatures Field Trip', p:'Nashville Zoo', n:'We visit the animals and each pick a favorite. I already know mine, and she is not in an enclosure.', m:'Nashville Zoo at Grassmere'}
+      ]
+    }
+  };
+  const panel = document.getElementById('panel');
+  const tabs = [...document.querySelectorAll('.tab')];
+  function renderDay(key){
+    currentDay = key;
+    const d = DAYS[key];
+    tabs.forEach(t => { const on = t.id === 'tab-'+key; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+    panel.setAttribute('aria-labelledby', 'tab-'+key);
+    if (d.sealed){
+      panel.innerHTML = `<div class="panel-head"><h3>${d.title}</h3></div>
+        <div class="sealed">
+          <button class="padlock" type="button" aria-label="Locked. Tap to try the lock.">
+            <svg viewBox="0 0 80 96" aria-hidden="true">
+              <path class="shackle" d="M20 44 V28 a20 20 0 0 1 40 0 V44" fill="none" stroke="#b8861f" stroke-width="9" stroke-linecap="round"/>
+              <rect x="8" y="40" width="64" height="52" rx="14" fill="#e3b23f"/>
+              <rect x="8" y="40" width="64" height="14" rx="7" fill="#f2c95a"/>
+              <circle cx="40" cy="64" r="7" fill="#6e3b2f"/><rect x="37" y="66" width="6" height="14" rx="3" fill="#6e3b2f"/>
+            </svg>
+            <span class="spark s1">✦</span><span class="spark s2">✧</span><span class="spark s3">✦</span>
+          </button>
+          <p class="lock-line"><strong>Locked by magic.</strong><br>Toto is still cooking up this day. It unlocks soon.</p>
+        </div>`;
+      const pad = panel.querySelector('.padlock'), line = panel.querySelector('.lock-line');
+      const tease = ['Nice try. Still locked.','The cow is guarding this one.','Moooo… 😤','Patience, Sophia. Patience.','No peeking!'];
+      let k = 0;
+      pad.addEventListener('click', () => {
+        pad.classList.remove('jiggle'); void pad.offsetWidth; pad.classList.add('jiggle');
+        line.innerHTML = `<strong>${tease[k++ % tease.length]}</strong><br>Toto is still cooking up this day. It unlocks soon.`;
+      });
+      return;
+    }
+    const items = d.stops.map((s,i) => `
+      <li class="stop${s.big?' big':''}" style="animation-delay:${i*.07}s">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[s.i]}</svg></span>
+        <div class="time">${s.t}</div>
+        <h4>${s.h}</h4>
+        <div class="place">${s.p}</div>
+        <p class="note">${s.n}</p>
+        ${s.warn ? `<p class="warn">${s.warn}</p>` : ''}
+        ${s.seat ? `<p class="seat">${s.seat}</p>` : ''}
+        ${s.cta ? (ticketURL
+          ? `<a class="btn ticket-btn" href="${ticketURL}" target="_blank" rel="noopener">${s.cta.label}</a><p class="note tiny">Opens the Nashville Symphony wallet so the ticket lands in your name.</p>`
+          : `<p class="note tiny">Your ticket is sealed. Say the magic word again to reveal it.</p>`) : ''}
+        ${s.m ? `<a class="map" href="${map(s.m)}" target="_blank" rel="noopener">Open in Maps</a>` : ''}
+      </li>`).join('');
+    const pack = d.pack ? `<div class="packing"><h4>Bring along</h4><ul>${d.pack.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : '';
+    panel.innerHTML = `<div class="panel-head"><h3>${d.title}</h3><p>${d.sub}</p></div><ol class="tl">${items}</ol>${pack}`;
+  }
+  tabs.forEach(t => t.classList.toggle('locked', !!DAYS[t.id.slice(4)].sealed));
+  tabs.forEach((t,i) => {
+    t.addEventListener('click', () => renderDay(t.id.slice(4)));
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : 2)) % 3];
+      n.focus(); renderDay(n.id.slice(4));
+    });
+  });
+
+  /* ---------- Yes / No ---------- */
+  const yes = document.getElementById('yes'), no = document.getElementById('no');
+  const noLines = ['Are you sure?','The cow is sad','Try the other one','Nope, can’t click me'];
+  let dodges = 0;
+  function dodge(){
+    if (reduce) return;
+    const dx = (Math.random()*2-1) * Math.min(120, innerWidth/4), dy = (Math.random()*2-1) * 30;
+    no.style.transform = `translate(${dx}px,${dy}px) rotate(${(Math.random()*20-10)}deg)`;
+    no.textContent = noLines[dodges++ % noLines.length];
+  }
+  no.addEventListener('pointerenter', dodge);
+  no.addEventListener('click', () => { no.textContent = 'Nice try. That counts as a yes.'; setTimeout(sayYes, 700); });
+  yes.addEventListener('click', sayYes);
+  function revealDays(){
+    document.getElementById('askBlock').hidden = true;
+    document.getElementById('saidYes').hidden = false;
+    document.getElementById('days').hidden = false;
+    renderDay('fri');
+  }
+  function sayYes(){
+    const [x,y] = centerOf(yes);
+    burst(x, y, ['♥','✦','♥','★'], 34);
+    store.set('magic-date-yes','1');
+    revealDays();
+  }
+
+  /* ---------- Unlock ---------- */
+  const wrong = ['Nope, not quite.','The cow shakes its head. Try again.','Think like a cow.','What sound does the cow on your card make?'];
+  let misses = 0;
+  const lock = document.getElementById('lock'), env = document.getElementById('env');
+  const unfold = document.getElementById('unfold'), wrap = document.getElementById('letterWrap');
+  const err = document.getElementById('err'), pass = document.getElementById('pass');
+
+  document.getElementById('seal').addEventListener('click', () => pass.focus());
+  document.getElementById('lockForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = pass.value.toUpperCase().replace(/[^A-Z]/g,'');
+    // Any of these open it (case, spaces and punctuation ignored)
+    // moo / Mooo... / I love (you) Toto / (thank you) big time — case, spaces and punctuation ignored
+    const key = canonical(v);
+    if (key){ store.set('magic-date-key', key); openVault(key); err.textContent = ''; unlock(); return; }
+    err.textContent = v ? wrong[misses++ % wrong.length] : 'Type the magic word first.';
+    env.classList.remove('locked-shake'); void env.offsetWidth; env.classList.add('locked-shake');
+  });
+
+  function showLetter(){
+    lock.hidden = true; unfold.hidden = true; wrap.hidden = false;
+    buildBouquet();
+    if (store.get('magic-date-yes')) revealDays();
+    scrollTo({top:0});
+  }
+  function unlock(){
+    store.set('magic-date-open','1');
+    pass.blur();
+    if (reduce){ showLetter(); return; }
+    const [x,y] = centerOf(document.getElementById('seal'));
+    burst(x, y, ['✦','★','✧','·'], 30);
+    env.classList.add('open');
+    setTimeout(() => env.classList.add('rise'), 650);
+    setTimeout(() => lock.classList.add('leave'), 1700);
+    setTimeout(() => { lock.hidden = true; unfold.hidden = false; scrollTo({top:0}); }, 2200);
+    setTimeout(showLetter, 2200 + 1850);
+  }
+
+  document.getElementById('replay').addEventListener('click', () => {
+    store.del('magic-date-open'); store.del('magic-date-yes'); store.del('magic-date-key'); ticketURL = null;
+    wrap.hidden = true; lock.hidden = false; lock.classList.remove('leave');
+    env.classList.remove('open','rise');
+    document.getElementById('askBlock').hidden = false;
+    document.getElementById('saidYes').hidden = true;
+    document.getElementById('days').hidden = true;
+    no.style.transform = ''; no.textContent = 'No'; dodges = 0;
+    pass.value = ''; scrollTo({top:0});
+  });
+
+  /* ---------- Throwable cows ---------- */
+  const G = 1900, E = 0.68;           // gravity (px/s²), bounciness
+  const bodies = [];
+  let raf = 0, last = 0;
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  function place(b){ b.el.style.transform = `translate(${b.x - b.w/2}px,${b.y - b.h/2}px) rotate(${b.a}deg)`; }
+  function moo(b, text){
+    const now = performance.now();
+    if (now - (b.lastMoo||0) < 500) return;
+    b.lastMoo = now;
+    const m = document.createElement('span');
+    m.className = 'moo'; m.textContent = text;
+    m.style.left = b.x + 'px'; m.style.top = (b.y - b.h*0.45) + 'px';
+    document.body.appendChild(m);
+    setTimeout(() => m.remove(), 1000);
+  }
+  function makeBody(src){
+    const r = src.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'cow-body';
+    el.style.width = r.width + 'px'; el.style.height = r.height + 'px';
+    const svgCopy = src.cloneNode(true); svgCopy.classList.remove('grabbable');
+    el.appendChild(svgCopy);
+    document.body.appendChild(el);
+    src.style.visibility = 'hidden';
+    const b = {el, x:r.left + r.width/2, y:r.top + r.height/2, vx:0, vy:0, a:0, va:0, w:r.width, h:r.height, r:(r.width + r.height)/4.2};
+    bodies.push(b); place(b);
+    el.addEventListener('pointerdown', e => grab(b, e));
+    return b;
+  }
+  function grab(b, e){
+    e.preventDefault();
+    b.held = true; b.sleep = false;
+    b.el.classList.add('held');
+    try { b.el.setPointerCapture(e.pointerId); } catch(_){}
+    b.ox = e.clientX - b.x; b.oy = e.clientY - b.y;
+    b.sx = e.clientX; b.sy = e.clientY;
+    b.hist = [{x:e.clientX, y:e.clientY, t:performance.now()}];
+    b.vx = b.vy = 0; b.va *= .3;
+    const move = ev => {
+      b.x = ev.clientX - b.ox; b.y = ev.clientY - b.oy;
+      const t = performance.now();
+      b.hist.push({x:ev.clientX, y:ev.clientY, t});
+      while (b.hist.length > 2 && t - b.hist[0].t > 90) b.hist.shift();
+      place(b);
+    };
+    const up = ev => {
+      b.held = false; b.el.classList.remove('held');
+      b.el.removeEventListener('pointermove', move);
+      b.el.removeEventListener('pointerup', up);
+      b.el.removeEventListener('pointercancel', up);
+      const h = b.hist, f = h[0], l = h[h.length-1];
+      const dist = Math.hypot(ev.clientX - b.sx, ev.clientY - b.sy);
+      if (dist < 6){                       // a tap: hop and moo
+        b.vy = -760; b.vx = (Math.random() - .5) * 260; b.va = (Math.random() - .5) * 900;
+        moo(b, 'Moo!');
+      } else {                             // a throw: keep the hand's momentum
+        const dt = Math.max(.016, (l.t - f.t) / 1000);
+        b.vx = clamp((l.x - f.x) / dt, -3200, 3200);
+        b.vy = clamp((l.y - f.y) / dt, -3200, 3200);
+        // spin from the throw, more when grabbed off-center
+        b.va = clamp(b.vx * 0.45 + (b.oy * b.vx - b.ox * b.vy) * 0.004, -1800, 1800);
+      }
+      kick();
+    };
+    b.el.addEventListener('pointermove', move);
+    b.el.addEventListener('pointerup', up);
+    b.el.addEventListener('pointercancel', up);
+    kick();
+  }
+  function step(t){
+    const dt = Math.min(.033, (t - last) / 1000 || .016); last = t;
+    const W = document.documentElement.clientWidth, H = innerHeight;
+    let awake = false;
+    for (const b of bodies){
+      if (b.held){ awake = true; continue; }
+      if (b.sleep) continue;
+      b.vy += G * dt;
+      b.x += b.vx * dt; b.y += b.vy * dt; b.a += b.va * dt;
+      b.vx *= Math.pow(.85, dt); b.va *= Math.pow(.55, dt);
+      const r = b.r;
+      if (b.x - r < 0){ if (Math.abs(b.vx) > 1100) moo(b,'MOO!'); b.x = r; b.vx = Math.abs(b.vx) * E; b.va = -b.va * .7 + b.vy * .25; }
+      if (b.x + r > W){ if (Math.abs(b.vx) > 1100) moo(b,'MOO!'); b.x = W - r; b.vx = -Math.abs(b.vx) * E; b.va = -b.va * .7 - b.vy * .25; }
+      if (b.y - r < 0){ if (Math.abs(b.vy) > 1100) moo(b,'MOO!'); b.y = r; b.vy = Math.abs(b.vy) * E; b.va += b.vx * .2; }
+      const onFloor = b.y + r >= H - .5;
+      if (b.y + r > H){
+        if (b.vy > 1300) moo(b,'MOO!');
+        b.y = H - r; b.vy = -Math.abs(b.vy) * E;
+        if (Math.abs(b.vy) < 90) b.vy = 0;
+        b.vx *= .9;
+        b.va = b.va * .5 + (b.vx / r) * 57.3 * .5;   // roll along the floor
+      }
+      // once it's resting on the floor, stand back up
+      if (onFloor && Math.abs(b.vy) < 1 && Math.abs(b.vx) < 40){
+        b.vx *= .8;
+        const up = Math.round(b.a / 360) * 360;
+        b.a += (up - b.a) * Math.min(1, dt * 5); b.va *= .7;
+        if (Math.abs(up - b.a) < .5 && Math.abs(b.vx) < 2){ b.a = up; b.va = 0; b.vx = 0; b.sleep = true; }
+      }
+      place(b);
+      if (!b.sleep) awake = true;
+    }
+    raf = awake ? requestAnimationFrame(step) : 0;
+  }
+  function kick(){ if (!raf){ last = performance.now(); raf = requestAnimationFrame(step); } }
+  document.querySelectorAll('svg.cow').forEach(src => {
+    src.classList.add('grabbable');
+    src.addEventListener('pointerdown', e => { if (src.style.visibility === 'hidden') return; grab(makeBody(src), e); });
+  });
+  addEventListener('resize', () => { bodies.forEach(b => b.sleep = false); kick(); });
+
+  if (store.get('magic-date-open')){ const k = store.get('magic-date-key'); if (k && VAULT[k]) openVault(k); showLetter(); }
+})();
+</script>
