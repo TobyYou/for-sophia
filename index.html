@@ -60,7 +60,8 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 .env.locked-shake{animation:shake .45s}
 
 /* Lock form */
-.lock{width:100%;max-width:360px;display:grid;gap:10px;margin-top:6px}
+.lock{width:100%;max-width:360px;display:grid;justify-items:center;gap:10px;margin-top:6px}
+.open-btn{font-size:1.15rem;padding:14px 30px}
 .lock label{font-family:var(--f-display);font-weight:700;font-size:1.1rem;color:var(--star)}
 .row{display:flex;gap:8px}
 .lock input{flex:1;min-width:0;font-family:var(--f-display);font-size:1.15rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;
@@ -212,21 +213,16 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
       <div class="env-letter"><b>Dear Sophia,</b><i></i><i></i><i></i></div>
       <div class="env-front"></div>
       <div class="env-flap"></div>
-      <button class="seal" id="seal" type="button" aria-label="Wax seal. Type the magic word below to open it.">S</button>
+      <button class="seal" id="seal" type="button" aria-label="Wax seal. Tap to open the letter.">S</button>
     </div>
 
-    <form class="lock" id="lockForm" autocomplete="off">
-      <label for="pass">Say the magic word to break the seal</label>
-      <div class="row">
-        <input id="pass" name="pass" type="text" placeholder="✦ ✦ ✦" autocapitalize="characters" spellcheck="false" aria-describedby="hint err">
-        <button class="btn" type="submit">Unlock</button>
-      </div>
-      <p class="hint" id="hint">Hint: if you ask a cow, he will literally tell you the passcode.</p>
-      <p class="err" id="err" aria-live="polite"></p>
-    </form>
+    <div class="lock">
+      <button class="btn open-btn" id="openBtn" type="button">Break the seal</button>
+      <p class="hint">Or just tap the wax seal. No magic word needed this time.</p>
+    </div>
 
     <div class="cow-row" aria-hidden="true">
-      <div class="bubble">psst… say it like I would<small>(also, you can throw me)</small></div>
+      <div class="bubble">psst… no password this time, just tap the seal<small>(also, you can still throw me)</small></div>
       <svg class="cow" viewBox="0 -24 230 176"><use href="#cowArt"/></svg>
     </div>
     <svg class="skyline" viewBox="0 0 400 150" aria-hidden="true"><use href="#nashArt"/></svg>
@@ -700,19 +696,10 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   let misses = 0;
   const lock = document.getElementById('lock'), env = document.getElementById('env');
   const unfold = document.getElementById('unfold'), wrap = document.getElementById('letterWrap');
-  const err = document.getElementById('err'), pass = document.getElementById('pass');
-
-  document.getElementById('seal').addEventListener('click', () => pass.focus());
-  document.getElementById('lockForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const v = pass.value.toUpperCase().replace(/[^A-Z]/g,'');
-    // Any of these open it (case, spaces and punctuation ignored)
-    // moo / Mooo... / I love (you) Toto / (thank you) big time — case, spaces and punctuation ignored
-    const key = canonical(v);
-    if (key){ store.set('magic-memory-key', key); openVault(key); err.textContent = ''; unlock(); return; }
-    err.textContent = v ? wrong[misses++ % wrong.length] : 'Type the magic word first.';
-    env.classList.remove('locked-shake'); void env.offsetWidth; env.classList.add('locked-shake');
-  });
+  let opening = false;
+  const openLetter = () => { if (opening) return; opening = true; unlock(); };
+  document.getElementById('seal').addEventListener('click', openLetter);
+  document.getElementById('openBtn').addEventListener('click', openLetter);
 
   function showLetter(){
     lock.hidden = true; unfold.hidden = true; wrap.hidden = false;
@@ -722,7 +709,6 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   }
   function unlock(){
     store.set('magic-memory-open','1');
-    pass.blur();
     if (reduce){ showLetter(); return; }
     const [x,y] = centerOf(document.getElementById('seal'));
     burst(x, y, ['✦','★','✧','·'], 30);
@@ -741,7 +727,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     document.getElementById('saidYes').hidden = true;
     document.getElementById('days').hidden = true;
     no.style.transform = ''; no.textContent = 'No'; no.classList.remove('gave-up'); dodges = 0;
-    pass.value = ''; scrollTo({top:0});
+    opening = false; scrollTo({top:0});
   });
 
   /* ---------- Throwable cows ---------- */
