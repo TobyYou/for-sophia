@@ -194,7 +194,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 <main>
   <!-- 1. Sealed envelope -->
   <section id="lock" class="scene">
-    <p class="eyebrow">The owls were busy, so a cow delivered this.</p>
+    <p class="eyebrow">The cow is back. This time it brought memories.</p>
     <h1>A letter for Sophia<span class="zh">魔法世界</span></h1>
 
     <div class="env" id="env">
@@ -234,29 +234,30 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     <article class="letter" id="letter">
       <div class="letter-top">
         <svg class="bouquet" id="bouquet" viewBox="-24 -34 306 298" role="img" aria-label="An autumn bouquet of golden beech leaves, ferns, sunflowers, daisies and purple asters"></svg>
-        <p class="kicker">A magical weekend invitation <span>· 魔法约会 ·</span></p>
+        <p class="kicker">Our magical weekend <span>· 魔法周末回忆 ·</span></p>
       </div>
 
       <p class="dear">Dear Sophia,</p>
-      <p>By the power of this extremely official, cow-delivered letter (not legally binding, but very bonding), you are hereby summoned to a magical weekend in Music City, Nashville.</p>
-      <p>I have planned everything down to the minute, except the parts where I look at you and forget what we were doing.</p>
-      <p>Side effects may include: laughing too much, eating too much, and liking me even more than you already do.</p>
+      <p>A few days ago, a cow delivered a very official letter summoning you to a magical weekend in Music City, Nashville. It turns out the magic was real.</p>
+      <p>We drank the best matcha, picked out our very first cowboy hats, sat in Row K while a full orchestra played Harry Potter, sang KTV with new friends, and learned a few ballroom steps in a dorm room. Then, the very next day, the universe sent us a whole crowd dancing salsa by the river, and we danced too.</p>
+      <p>I planned some of it down to the minute. My favorite parts, I didn't plan at all.</p>
+      <p>Thank you for coming all this way. Thank you, big time.</p>
 
       <div class="sign">
         <p>Yours, big time,<br>Toto</p>
         <svg class="cow" viewBox="0 -24 230 176" aria-hidden="true"><use href="#cowArt"/></svg>
       </div>
       <div id="askBlock">
-        <p class="ask">Will you be my date this weekend?</p>
+        <p class="ask">Will you come back for another weekend?</p>
         <div class="answers" id="answers">
           <button class="btn btn-yes" id="yes" type="button">Yes!</button>
           <button class="btn btn-no" id="no" type="button">No</button>
         </div>
       </div>
-      <p class="said-yes" id="saidYes" hidden>She said yes. The cow is thrilled.</p>
+      <p class="said-yes" id="saidYes" hidden>She said yes. The cow is already planning the next one.</p>
 
       <div class="days" id="days" hidden>
-        <h2>Tap a day to see the plan</h2>
+        <h2>Tap a day to relive it</h2>
         <div class="tabs" role="tablist" aria-label="Weekend days">
           <button class="tab" role="tab" id="tab-fri" aria-controls="panel" aria-selected="true">Friday<small>Nov 6</small></button>
           <button class="tab" role="tab" id="tab-sat" aria-controls="panel" aria-selected="false" tabindex="-1">Saturday<small>Nov 7</small></button>
@@ -527,6 +528,12 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     ticket:'<path d="M3 8a2 2 0 0 0 0 4v4h18v-4a2 2 0 0 1 0-4V4H3z"/><path d="M14 4v12"/>',
     wand:'<path d="M4 20L15 9"/><path d="M18 2l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>',
     moon:'<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/>',
+    hat:'<path d="M2 16c4 3 16 3 20 0"/><path d="M6 15l1.5-7c1-1.5 3-1.5 4.5.5 1.5-2 3.5-2 4.5-.5L18 15"/>',
+    hanger:'<path d="M12 7a2 2 0 1 1 2-2"/><path d="M14 5c0 1.5-2 2-2 3.5L21 16H3l9-7.5"/>',
+    mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
+    dance:'<circle cx="14" cy="4" r="2"/><path d="M10 21l2-6 3 2v4"/><path d="M7 10l4-3 4 1 3 3"/><path d="M11 7l-1 7"/>',
+    gift:'<rect x="4" y="11" width="16" height="10"/><path d="M3 8h18v3H3zM12 8v13"/><path d="M12 8c-2-4-6-3-4 0M12 8c2-4 6-3 4 0"/>',
+    plane:'<path d="M10 14L3 11l1-2 8 1 5-6h2l-3 7 4 2-1 2-4-1-3 6H9z"/>',
     paw:'<circle cx="12" cy="16" r="4"/><circle cx="6" cy="10" r="2"/><circle cx="10" cy="6" r="2"/><circle cx="14" cy="6" r="2"/><circle cx="18" cy="10" r="2"/>',
     guitar:'<circle cx="9" cy="15" r="5"/><path d="M12 12l8-8M18 2l4 4"/>'
   };
@@ -534,34 +541,42 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   const DAYS = {
     fri: {
       title: 'Friday, November 6',
-      sub: 'The big day of magic, from first coffee to the last note.',
+      sub: 'Matcha, our first cowboy hats, and a night of real magic.',
       stops: [
-        {i:'coffee', t:'8:00 – 10:00 AM', h:'Morning Potion', p:'A Andrews Bakery', n:'Breakfast and coffee together to start the day.', m:'A Andrews Bakery Nashville'},
-        {i:'book', t:'10:00 AM – before noon', h:'Charms Class: AI Friday', p:'Back on campus', n:'You get to meet Dr. Spencer-Smith, a really cool professor. We will not stay all the way to 12.'},
-        {i:'bowl', t:'12:30 PM', h:'The Great Lunch', p:'Baby Chan', n:'Table booked. Refuel before we make things with our hands.', m:'Baby Chan Nashville'},
-        {i:'candle', t:'2:00 – 3:00 PM', h:'Candle Conjuring', p:'Paddywax Candle Bar, Berry Hill', n:'An hour-long, instructor-led candle making workshop. We pick our scents and pour our own.', warn:'Be there by 1:50 PM. They want us 10 minutes early!', m:'Paddywax Candle Bar Berry Hill Nashville'},
-        {i:'guitar', t:'3:00 PM onward', h:'Wandering Hours', p:'Around Berry Hill', n:'While our candles set, we wander around Berry Hill and see what we find.'},
-        {i:'plate', t:'Early evening', h:'Supper Quest', p:'Dinner somewhere good', n:'A proper dinner before the show.'},
-        {i:'ticket', t:'7:00 PM', h:'Arrive at the Hall', p:'Schermerhorn Symphony Center', n:'Grab a drink, take a photo, find our seats.', m:'Schermerhorn Symphony Center Nashville'},
-        {i:'wand', t:'7:30 – about 10:15 PM', h:'The Main Spell', p:'Harry Potter and the Prisoner of Azkaban in Concert', n:'A full orchestra plays the film live. About 2 hours 45 minutes.', seat:'Orchestra · Row K · Seat 14 · Door 2', cta:{ticket:true, label:'Accept your ticket'}, big:true},
-        {i:'moon', t:'Around 10:20 PM', h:'Midnight Snack', p:'Somewhere local', n:'A late bite while we talk about our favorite parts.'}
+        {i:'coffee', t:'Morning', h:'Morning Potion', p:'A Andrews Bakery', n:'Breakfast and coffee to start the very first day.', m:'A Andrews Bakery Nashville'},
+        {i:'book', t:'Late morning', h:'Charms Class: AI Friday', p:'Back on campus', n:'You met Dr. Spencer-Smith, and somehow AI talk felt like a date too.'},
+        {i:'bowl', t:'12:30 PM', h:'The Great Lunch', p:'Baby Chan', n:'Our booked table, and a very happy lunch.', m:'Baby Chan Nashville'},
+        {i:'coffee', t:'Afternoon', h:'The Green Potion', p:'La La Land', n:'Honestly some of the best matcha we have ever had.'},
+        {i:'hat', t:'Afternoon', h:'Our First Cowboy Hats', p:'La La Land', n:'We each had a hat custom made, the first ones that are truly ours. Very Nashville of us.'},
+        {i:'hanger', t:'Afternoon', h:'Vintage Treasure Hunt', p:'Vintage shops along the street', n:'Digging through old treasures and trying on things just for fun.'},
+        {i:'wand', t:'7:30 PM', h:'The Main Spell', p:'Harry Potter and the Prisoner of Azkaban in Concert', n:'A full orchestra playing the movie live, and you right next to me.', seat:'Orchestra · Row K · Seat 14 · Door 2', big:true},
+        {i:'moon', t:'Night', h:'Back to the Hotel', p:'Happy and tired', n:'The end of a very full, very magical first day.'}
       ]
     },
     sat: {
-      sealed: true, // set to false to unlock
       title: 'Saturday, November 7',
-      sub: 'Lock-in day, with snacks.',
+      sub: 'Coffee, books, Thai food, and a night of singing with new friends.',
       stops: [
-        {t:'Daytime', i:'book', h:'Study Spells', p:'Lock-in mode', n:'We get our work done, side by side.'},
-        {t:'Meals', i:'bowl', h:'Food Quests', p:'Somewhere good in Nashville', n:'We go out to eat at a few places. You get a vote on where.'}
+        {i:'coffee', t:'Morning', h:'Morning Potion, Round Two', p:'Bobo Café', n:'A slow morning and good coffee before heading out.', m:'Bobo Cafe Nashville'},
+        {i:'book', t:'Late morning', h:'Lost in the Library', p:'A bookstore', n:'Browsing the shelves together, no rush at all.'},
+        {i:'bowl', t:'Lunch', h:'A Trip to Thailand', p:'DegThai', n:'Thai food that warmed us right up.', m:'DegThai Nashville'},
+        {i:'book', t:'Afternoon', h:'Study Spells', p:'Back on campus', n:'Sitting side by side, studying and working. Quiet, cozy, and somehow one of my favorite parts.'},
+        {i:'mic', t:'Evening', h:'KTV Night', p:'Opus College rec room', n:'Singing with everyone and meeting our new friends from the VUCD Chinese drama club.', big:true},
+        {i:'plate', t:'Evening', h:'Hot Chicken, Delivered', p:"Hattie B's", n:'Nashville hot chicken, delivered right to the KTV party.', m:"Hattie B's Hot Chicken Nashville"},
+        {i:'dance', t:'Night', h:'Dance Lessons in the Dorm', p:'Our tiny ballroom', n:'We learned a few ballroom basics, not knowing we would need them the very next day.'},
+        {i:'moon', t:'Late night', h:'Lights Out', p:'Asleep almost instantly', n:'All that singing and dancing knocked us right out.'}
       ]
     },
     sun: {
-      sealed: true, // set to false to unlock
       title: 'Sunday, November 8',
-      sub: 'A wild day out.',
+      sub: 'One more morning in La La Land, salsa by the river, and a goodbye.',
       stops: [
-        {i:'paw', t:'Daytime', h:'Magical Creatures Field Trip', p:'Nashville Zoo', n:'We visit the animals and each pick a favorite. I already know mine, and she is not in an enclosure.', m:'Nashville Zoo at Grassmere'}
+        {i:'gift', t:'Morning', h:'Little Christmas Magic', p:'La La Land, again', n:'Wandering the shops and picking out Christmas ornaments and little gifts.'},
+        {i:'plate', t:'Breakfast', h:'The Best Breakfast', p:'The Buttermilk Ranch', n:'Very, very, very good. We loved every bite.', m:'The Buttermilk Ranch Nashville'},
+        {i:'dance', t:'Midday', h:'Salsa by the River', p:'Centennial Park', n:'We had just learned our first steps the night before, and then we found a whole crowd dancing salsa by the water. Of course we joined in.', m:'Centennial Park Nashville', big:true},
+        {i:'book', t:'Afternoon', h:'Planning What Comes Next', p:'Back on campus', n:'Mapping out the days ahead together.'},
+        {i:'plate', t:'Evening', h:'Barbecue Farewell Feast', p:'A barbecue spot near campus', n:'One last big Nashville dinner together.'},
+        {i:'plane', t:'Night', h:'Until Next Time', p:'Nashville International Airport', n:'The hardest stop of the weekend. The cow says come back soon.'}
       ]
     }
   };
@@ -654,7 +669,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   function sayYes(){
     const [x,y] = centerOf(yes);
     burst(x, y, ['♥','✦','♥','★'], 34);
-    store.set('magic-date-yes','1');
+    store.set('magic-memory-yes','1');
     revealDays();
   }
 
@@ -672,7 +687,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     // Any of these open it (case, spaces and punctuation ignored)
     // moo / Mooo... / I love (you) Toto / (thank you) big time — case, spaces and punctuation ignored
     const key = canonical(v);
-    if (key){ store.set('magic-date-key', key); openVault(key); err.textContent = ''; unlock(); return; }
+    if (key){ store.set('magic-memory-key', key); openVault(key); err.textContent = ''; unlock(); return; }
     err.textContent = v ? wrong[misses++ % wrong.length] : 'Type the magic word first.';
     env.classList.remove('locked-shake'); void env.offsetWidth; env.classList.add('locked-shake');
   });
@@ -680,11 +695,11 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   function showLetter(){
     lock.hidden = true; unfold.hidden = true; wrap.hidden = false;
     buildBouquet();
-    if (store.get('magic-date-yes')) revealDays();
+    if (store.get('magic-memory-yes')) revealDays();
     scrollTo({top:0});
   }
   function unlock(){
-    store.set('magic-date-open','1');
+    store.set('magic-memory-open','1');
     pass.blur();
     if (reduce){ showLetter(); return; }
     const [x,y] = centerOf(document.getElementById('seal'));
@@ -697,7 +712,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   }
 
   document.getElementById('replay').addEventListener('click', () => {
-    store.del('magic-date-open'); store.del('magic-date-yes'); store.del('magic-date-key'); ticketURL = null;
+    store.del('magic-memory-open'); store.del('magic-memory-yes'); store.del('magic-memory-key'); ticketURL = null;
     wrap.hidden = true; lock.hidden = false; lock.classList.remove('leave');
     env.classList.remove('open','rise');
     document.getElementById('askBlock').hidden = false;
@@ -819,6 +834,6 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
   });
   addEventListener('resize', () => { bodies.forEach(b => b.sleep = false); kick(); });
 
-  if (store.get('magic-date-open')){ const k = store.get('magic-date-key'); if (k && VAULT[k]) openVault(k); showLetter(); }
+  if (store.get('magic-memory-open')){ const k = store.get('magic-memory-key'); if (k && VAULT[k]) openVault(k); showLetter(); }
 })();
 </script>
