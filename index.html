@@ -107,6 +107,47 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 .cl-sign p{margin:0;font-family:var(--f-hand);font-size:1.6rem;line-height:1.1;color:var(--blue)}
 .cl-sign small{display:block;font-size:.7em;color:var(--cow-brown)}
 .cl-sign .cow{width:120px}
+/* Next chapter: San Diego */
+.dawn{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.6s ease;
+  background:linear-gradient(180deg,#4fa3e0 0%,#8fd0f5 42%,#ffe0b0 78%,#ffc98a 100%)}
+body.sunny .dawn{opacity:1}
+body.sunny #stars{opacity:0;transition:opacity 1.6s}
+#stars{transition:opacity 1.6s}
+body.sunny .link{color:#2c3e50}
+.next-chapter{position:relative;margin-top:28px;border-radius:18px;overflow:hidden;color:#24364a;
+  background:linear-gradient(180deg,#6cbcf0 0%,#a9dcf7 45%,#ffe6bf 100%);box-shadow:0 24px 60px rgb(0 0 0 / .35)}
+.nc-scene{position:relative;height:210px}
+.nc-sun{position:absolute;left:50%;top:40px;width:92px;height:92px;margin-left:-46px;border-radius:50%;
+  background:radial-gradient(circle,#fff6c9 0%,#ffd25e 55%,#ffb23f 100%);box-shadow:0 0 50px 18px rgb(255 210 94 / .55);
+  transform:translateY(70px);transition:transform 2.2s cubic-bezier(.2,.8,.2,1)}
+.next-chapter.seen .nc-sun{transform:translateY(0);animation:sunGlow 4s ease-in-out 2.2s infinite}
+.nc-gull{position:absolute;width:26px;height:auto;animation:gull 9s linear infinite}
+.nc-gull.g1{top:34px;left:-30px}
+.nc-gull.g2{top:58px;left:-30px;width:18px;animation-delay:3.5s;animation-duration:11s}
+.nc-palm{position:absolute;bottom:34px;width:92px;height:auto;transform-origin:45% 100%;animation:sway 5s ease-in-out infinite}
+.nc-palm.left{left:-6px}
+.nc-palm.right{right:-6px;transform:scaleX(-1);animation-name:swayR;animation-delay:1.2s}
+.nc-sea{position:absolute;left:0;right:0;bottom:22px;height:44px;overflow:hidden;background:#2e8fbf}
+.nc-wave{position:absolute;left:0;bottom:0;width:200%;height:40px;animation:waves 7s linear infinite}
+.nc-wave.w1{fill:#5fbde2;bottom:10px}
+.nc-wave.w2{fill:#3aa3d3;animation-duration:5s;animation-direction:reverse}
+.nc-sand{position:absolute;left:0;right:0;bottom:0;height:26px;background:#f3d29b;border-top:3px solid #fff3dc}
+.nc-body{position:relative;display:grid;justify-items:center;gap:6px;text-align:center;padding:16px 20px 24px;background:#fff3dc}
+.nc-kicker{margin:0;font-family:var(--f-display);font-weight:700;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:#e0762b}
+.nc-title{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(2.2rem,10vw,3rem);line-height:1;color:#1f6f9a}
+.nc-when{margin:0;font-family:var(--f-hand);font-size:1.5rem;color:#c9741f}
+.nc-text{margin:4px 0 6px;max-width:44ch;color:#3d4f61}
+.nc-lock{display:flex;align-items:center;gap:12px;text-align:left;border:2px dashed #f0b56a;border-radius:16px;background:#fffaf0;
+  padding:10px 14px;font:inherit;font-size:.92rem;color:#3d4f61;cursor:pointer}
+.nc-lock svg{width:40px;height:48px;flex:none;animation:wobble 2.6s ease-in-out infinite}
+.nc-lock strong{color:#c9741f}
+.nc-lock.jiggle svg{animation:shake .45s}
+.nc-lock:focus-visible{outline:3px solid #1f6f9a;outline-offset:3px}
+@keyframes waves{to{transform:translateX(-50%)}}
+@keyframes sway{50%{transform:rotate(3deg)}}
+@keyframes swayR{0%,100%{transform:scaleX(-1) rotate(0)}50%{transform:scaleX(-1) rotate(3deg)}}
+@keyframes gull{0%{transform:translateX(0) translateY(0)}50%{transform:translateX(220px) translateY(-8px)}100%{transform:translateX(520px) translateY(4px)}}
+@keyframes sunGlow{50%{box-shadow:0 0 70px 26px rgb(255 210 94 / .7)}}
 #lock{transition:opacity .5s,transform .5s;min-height:calc(100vh - 110px);min-height:calc(100svh - 110px);justify-content:center}
 .bubble{transition:opacity .4s,transform .4s}
 .bubble.gone{opacity:0;transform:scale(.85) translateY(6px)}
@@ -201,6 +242,7 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
 
 <canvas id="stars" aria-hidden="true"></canvas>
 <div class="glow" aria-hidden="true"></div>
+<div class="dawn" aria-hidden="true"></div>
 
 <main>
   <!-- 1. Sealed envelope -->
@@ -287,6 +329,51 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
         <svg class="cow" viewBox="0 -24 230 176" aria-hidden="true"><use href="#cowArt"/></svg>
       </div>
     </article>
+    <section class="next-chapter" id="nextChapter" aria-labelledby="ncTitle">
+      <div class="nc-scene" aria-hidden="true">
+        <div class="nc-sun"></div>
+        <svg class="nc-gull g1" viewBox="0 0 30 12"><path d="M1 9 Q8 1 15 8 Q22 1 29 9" fill="none" stroke="#3a4a5c" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="nc-gull g2" viewBox="0 0 30 12"><path d="M1 9 Q8 1 15 8 Q22 1 29 9" fill="none" stroke="#3a4a5c" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="nc-palm left" viewBox="0 0 100 160" aria-hidden="true">
+          <path d="M42 160 Q40 100 56 42" fill="none" stroke="#2c5a5e" stroke-width="7" stroke-linecap="round"/>
+          <g class="fronds" fill="#2f6f6a">
+            <path d="M56 42 Q30 22 4 34 Q30 30 56 46Z"/><path d="M56 42 Q36 6 12 6 Q36 18 54 46Z"/>
+            <path d="M56 42 Q66 4 90 6 Q70 16 58 46Z"/><path d="M56 42 Q84 26 100 44 Q80 36 58 47Z"/>
+            <path d="M56 42 Q62 60 52 84 Q56 62 54 46Z"/>
+          </g>
+          <circle cx="54" cy="47" r="4" fill="#6b4a2b"/><circle cx="60" cy="49" r="3.5" fill="#7a5532"/>
+        </svg>
+        <svg class="nc-palm right" viewBox="0 0 100 160" aria-hidden="true">
+          <path d="M42 160 Q40 100 56 42" fill="none" stroke="#2c5a5e" stroke-width="7" stroke-linecap="round"/>
+          <g class="fronds" fill="#2f6f6a">
+            <path d="M56 42 Q30 22 4 34 Q30 30 56 46Z"/><path d="M56 42 Q36 6 12 6 Q36 18 54 46Z"/>
+            <path d="M56 42 Q66 4 90 6 Q70 16 58 46Z"/><path d="M56 42 Q84 26 100 44 Q80 36 58 47Z"/>
+            <path d="M56 42 Q62 60 52 84 Q56 62 54 46Z"/>
+          </g>
+          <circle cx="54" cy="47" r="4" fill="#6b4a2b"/><circle cx="60" cy="49" r="3.5" fill="#7a5532"/>
+        </svg>
+        <div class="nc-sea">
+          <svg class="nc-wave w1" viewBox="0 0 800 40" preserveAspectRatio="none"><path d="M0 20 Q50 4 100 20 T200 20 T300 20 T400 20 T500 20 T600 20 T700 20 T800 20 V40 H0Z"/></svg>
+          <svg class="nc-wave w2" viewBox="0 0 800 40" preserveAspectRatio="none"><path d="M0 22 Q50 8 100 22 T200 22 T300 22 T400 22 T500 22 T600 22 T700 22 T800 22 V40 H0Z"/></svg>
+        </div>
+        <div class="nc-sand"></div>
+      </div>
+      <div class="nc-body">
+        <p class="nc-kicker">Chapter Two</p>
+        <h2 class="nc-title" id="ncTitle">San Diego</h2>
+        <p class="nc-when">Thanksgiving · Coming soon</p>
+        <p class="nc-text">Next stop: sunshine, ocean air, and a whole new set of spells. The cow is already shopping for sunscreen.</p>
+        <button class="nc-lock" id="ncLock" type="button">
+          <svg viewBox="0 0 80 96" aria-hidden="true">
+            <path d="M20 44 V28 a20 20 0 0 1 40 0 V44" fill="none" stroke="#c9741f" stroke-width="9" stroke-linecap="round"/>
+            <rect x="8" y="40" width="64" height="52" rx="14" fill="#ffb347"/>
+            <rect x="8" y="40" width="64" height="14" rx="7" fill="#ffd27a"/>
+            <circle cx="40" cy="64" r="7" fill="#7a3b1f"/><rect x="37" y="66" width="6" height="14" rx="3" fill="#7a3b1f"/>
+          </svg>
+          <span><strong id="ncLockLine">Locked by sunshine.</strong><br>The plan is being written right now.</span>
+        </button>
+      </div>
+    </section>
     <button class="link" id="replay" type="button">Seal it again and replay</button>
   </section>
 </main>
@@ -842,6 +929,22 @@ h1 .zh{display:block;font-family:var(--f-body);font-weight:700;font-size:.42em;l
     src.addEventListener('pointerdown', e => { if (src.style.visibility === 'hidden') return; grab(makeBody(src), e); });
   });
   addEventListener('resize', () => { bodies.forEach(b => b.sleep = false); kick(); });
+
+  /* ---------- Next chapter: the night turns sunny as San Diego comes into view ---------- */
+  const nc = document.getElementById('nextChapter');
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(entries => entries.forEach(e => {
+      document.body.classList.toggle('sunny', e.isIntersecting);
+      if (e.isIntersecting) nc.classList.add('seen');
+    }), {threshold: .35}).observe(nc);
+  } else { nc.classList.add('seen'); }
+  const ncLock = document.getElementById('ncLock'), ncLine = document.getElementById('ncLockLine');
+  const beachTeases = ['No peeking!','The waves are still rehearsing.','Moo. (beach edition)','Sunscreen first, spoilers later.','Locked by sunshine.'];
+  let bt = 0;
+  ncLock.addEventListener('click', () => {
+    ncLock.classList.remove('jiggle'); void ncLock.offsetWidth; ncLock.classList.add('jiggle');
+    ncLine.textContent = beachTeases[bt++ % beachTeases.length];
+  });
 
   if (store.get('magic-memory-open')){ const k = store.get('magic-memory-key'); if (k && VAULT[k]) openVault(k); showLetter(); }
 })();
