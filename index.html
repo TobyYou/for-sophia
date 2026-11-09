@@ -6,7 +6,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Grandstander:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Grandstander:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap">
 <style>
 /* Layout: one centered stage over a starry night. Sealed envelope, then a letter that unfolds, then the weekend's tickets. */
 :root{
@@ -19,12 +19,13 @@
   --env-back:#e9d6ae; --env-front:#f3e5c3; --env-flap:#ead39f;
   --f-display:"Grandstander","Comic Neue","Trebuchet MS",sans-serif;
   --f-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --f-story:"Fraunces","Iowan Old Style","Georgia",serif;
   --f-body:"Nunito","Avenir Next","Segoe UI",system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{min-height:100%}
+html,body{min-height:100%;overflow-x:hidden;overflow-x:clip}
 body{margin:0}
 body{background:var(--night);color:var(--mist);font-family:var(--f-body);font-size:16px;line-height:1.55;overflow-x:hidden}
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -114,7 +115,7 @@ body.sunny .dawn{opacity:1}
 body.sunny #stars{opacity:0;transition:opacity 1.6s}
 #stars{transition:opacity 1.6s}
 body.sunny .link{color:#2c3e50}
-.next-chapter{position:relative;margin-top:28px;border-radius:18px;overflow:hidden;color:#24364a;
+.next-chapter{contain:paint;position:relative;margin-top:28px;border-radius:18px;overflow:hidden;color:#24364a;
   background:linear-gradient(180deg,#6cbcf0 0%,#a9dcf7 45%,#ffe6bf 100%);box-shadow:0 24px 60px rgb(0 0 0 / .35)}
 .nc-scene{position:relative;height:210px}
 .nc-sun{position:absolute;left:50%;top:40px;width:92px;height:92px;margin-left:-46px;border-radius:50%;
@@ -148,6 +149,39 @@ body.sunny .link{color:#2c3e50}
 @keyframes swayR{0%,100%{transform:scaleX(-1) rotate(0)}50%{transform:scaleX(-1) rotate(3deg)}}
 @keyframes gull{0%{transform:translateX(0) translateY(0)}50%{transform:translateX(220px) translateY(-8px)}100%{transform:translateX(520px) translateY(4px)}}
 @keyframes sunGlow{50%{box-shadow:0 0 70px 26px rgb(255 210 94 / .7)}}
+/* Storybook: what we did */
+.storybook{--page:#fbf2e0;--page-2:#f3e4c6;--sb-ink:#4a3426;--sb-accent:#a5523a;position:relative;margin:34px auto 0;max-width:540px;
+  color:var(--sb-ink);border-radius:6px 14px 14px 6px;padding:30px 22px 28px 30px;
+  background:linear-gradient(90deg,rgb(120 80 40 / .18) 0,rgb(120 80 40 / 0) 18px),radial-gradient(120% 90% at 50% 0%,var(--page) 55%,var(--page-2) 100%);
+  box-shadow:3px 3px 0 #efe0c2,6px 6px 0 #e6d3ae,9px 9px 0 #dcc597,0 26px 60px rgb(0 0 0 / .5);
+  animation:pageIn 1.2s cubic-bezier(.2,.8,.2,1) both;transform-origin:left center}
+.sb-head{text-align:center;display:grid;gap:4px;margin-bottom:18px}
+.sb-kicker{margin:0;font-family:var(--f-hand);font-size:1.4rem;color:var(--sb-accent)}
+.sb-title{margin:0;font-family:var(--f-story);font-weight:600;font-style:italic;font-size:clamp(1.9rem,8vw,2.5rem);line-height:1.05;text-wrap:balance}
+.sb-sub{margin:0;font-family:var(--f-story);font-style:italic;font-size:.98rem;color:#7a6250}
+.sb-flourish{margin:6px 0 0;color:#c49a6c;letter-spacing:.2em;font-size:.9rem}
+.storybook .tabs{margin-bottom:20px}
+.storybook .tab{position:relative;border:0;border-radius:4px 4px 0 0;padding:12px 4px 18px;background:#e9d5b0;color:var(--sb-ink);
+  font-family:var(--f-story);font-weight:600;font-style:italic;font-size:1.05rem;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+.storybook .tab small{font-family:var(--f-body);font-style:normal;font-weight:600}
+.storybook .tab[aria-selected="true"]{background:var(--sb-accent);color:#fff6e6;transform:translateY(4px)}
+.storybook .tab[aria-selected="true"] small{color:#ffe1b8}
+.storybook .panel-head h3{font-family:var(--f-story);font-style:italic;font-weight:600;font-size:1.35rem}
+.storybook .panel-head p{font-family:var(--f-story);font-style:italic}
+.storybook .stop h4{font-family:var(--f-story);font-weight:600;font-size:1.12rem}
+.storybook .time{color:var(--sb-accent);font-family:var(--f-hand);font-size:1.05rem;letter-spacing:0;text-transform:none;font-weight:700}
+.storybook .stop.big .time{color:#ffcf9a}
+.storybook .note{font-family:var(--f-story);font-size:.98rem;line-height:1.55}
+.storybook .stop.big{background:#4a3426}
+.sb-end{text-align:center;display:grid;gap:6px;margin-top:8px}
+.sb-closing{margin:6px auto 0;max-width:30ch;font-family:var(--f-story);font-style:italic;font-size:1.12rem;line-height:1.45}
+.sb-theend{margin:10px 0 0;font-family:var(--f-hand);font-size:2.2rem;line-height:1;color:var(--sb-accent)}
+.sb-theend span{display:block;font-family:var(--f-story);font-style:italic;font-size:.42em;color:#7a6250;margin-top:4px}
+.sb-turn{margin:8px 0 0;font-family:var(--f-body);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:#9a7f66}
+.sb-turn span{display:inline-block;animation:nudge 1.6s ease-in-out infinite}
+@keyframes pageIn{from{opacity:0;transform:perspective(1200px) rotateY(-14deg) translateX(-10px)}}
+@keyframes nudge{50%{transform:translateY(4px)}}
 #lock{transition:opacity .5s,transform .5s;min-height:calc(100vh - 110px);min-height:calc(100svh - 110px);justify-content:center}
 .bubble{transition:opacity .4s,transform .4s}
 .bubble.gone{opacity:0;transform:scale(.85) translateY(6px)}
@@ -295,40 +329,29 @@ body.sunny .link{color:#2c3e50}
         <p>Yours, big time,<br>Toto</p>
         <svg class="cow" viewBox="0 -24 230 176" aria-hidden="true"><use href="#cowArt"/></svg>
       </div>
-      <div id="askBlock">
-        <p class="ask">Will you come back for another weekend?</p>
-        <div class="answers" id="answers">
-          <button class="btn btn-yes" id="yes" type="button">Yes!</button>
-          <button class="btn btn-no" id="no" type="button">No</button>
-        </div>
-      </div>
-      <p class="said-yes" id="saidYes" hidden>She said yes. The cow is already planning the next one.</p>
-
-      <div class="days" id="days" hidden>
-        <h2>Tap a day to relive it</h2>
-        <div class="tabs" role="tablist" aria-label="Weekend days">
-          <button class="tab" role="tab" id="tab-fri" aria-controls="panel" aria-selected="true">Friday<small>Nov 6</small></button>
-          <button class="tab" role="tab" id="tab-sat" aria-controls="panel" aria-selected="false" tabindex="-1">Saturday<small>Nov 7</small></button>
-          <button class="tab" role="tab" id="tab-sun" aria-controls="panel" aria-selected="false" tabindex="-1">Sunday<small>Nov 8</small></button>
-        </div>
-        <div id="panel" role="tabpanel" aria-labelledby="tab-fri"></div>
-      </div>
 
       <svg class="skyline" viewBox="0 0 400 150" aria-hidden="true"><use href="#nashArt"/></svg>
     </article>
-    <article class="cow-letter" aria-label="A second letter, from the little cow">
-      <p class="cl-kicker">P.S. A second letter, delivered by hoof</p>
-      <p class="cl-dear">Dear Princess Sophia,<span class="cl-zh">致 公主殿下</span></p>
-      <p>Moo. It's me again, the little cow. Prince Toto asked me to deliver one more letter (the owls are still busy).</p>
-      <p>Your Highness, on behalf of Prince Toto, thank you for coming to the Magic Weekend in Nashville. The cowboy hats and the matcha, the singing and the salsa: he will remember every bit of it.</p>
-      <p>And just so you know, he still did it all weekend. He would look at your face and completely forget the time, and what you two were doing. I saw it with my own eyes. Moo.</p>
-      <p>He hasn't stopped smiling since. Honestly, neither have I.</p>
-      <p>We can't wait for the next adventure together. Same cow, new spells.</p>
-      <div class="cl-sign">
-        <p>Mooo with love,<br>The Little Cow<br><small>on behalf of Prince Toto</small></p>
-        <svg class="cow" viewBox="0 -24 230 176" aria-hidden="true"><use href="#cowArt"/></svg>
+    <section class="storybook" id="days" aria-labelledby="sbTitle">
+      <div class="sb-head">
+        <p class="sb-kicker">Our storybook</p>
+        <h2 class="sb-title" id="sbTitle">The Nashville Chapter</h2>
+        <p class="sb-sub">November 6 – 8, 2026 · a true story</p>
+        <p class="sb-flourish" aria-hidden="true">✦ ── ❦ ── ✦</p>
       </div>
-    </article>
+      <div class="tabs" role="tablist" aria-label="Weekend days">
+        <button class="tab" role="tab" id="tab-fri" aria-controls="panel" aria-selected="true">Day One<small>Fri · Nov 6</small></button>
+        <button class="tab" role="tab" id="tab-sat" aria-controls="panel" aria-selected="false" tabindex="-1">Day Two<small>Sat · Nov 7</small></button>
+        <button class="tab" role="tab" id="tab-sun" aria-controls="panel" aria-selected="false" tabindex="-1">Day Three<small>Sun · Nov 8</small></button>
+      </div>
+      <div id="panel" role="tabpanel" aria-labelledby="tab-fri"></div>
+      <div class="sb-end">
+        <p class="sb-flourish" aria-hidden="true">✦ ── ❦ ── ✦</p>
+        <p class="sb-closing">Three days. <span id="rcCount">22</span> little moments. One favorite person.</p>
+        <p class="sb-theend">The End<span>of Chapter One</span></p>
+        <p class="sb-turn">turn the page <span aria-hidden="true">↓</span></p>
+      </div>
+    </section>
     <section class="next-chapter" id="nextChapter" aria-labelledby="ncTitle">
       <div class="nc-scene" aria-hidden="true">
         <div class="nc-sun"></div>
@@ -619,7 +642,7 @@ body.sunny .link{color:#2c3e50}
       const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'PBKDF2', false, ['deriveKey']);
       const k = await crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:200000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
       ticketURL = new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv}, k, ct));
-      if (!document.getElementById('days').hidden) renderDay(currentDay);
+      renderDay(currentDay);
     } catch(e){ ticketURL = null; }
   }
 
@@ -744,39 +767,10 @@ body.sunny .link{color:#2c3e50}
   });
 
   /* ---------- Yes / No ---------- */
-  const yes = document.getElementById('yes'), no = document.getElementById('no');
-  const noLines = ['Are you sure?','The cow is sad','Try the other one','Nope, can’t click me','Moooo… 😤'];
-  let dodges = 0;
-  // Each attempt at "No" runs away with a new line. After the last line it gives up
-  // and becomes "Okay fine, yes", which she still has to tap herself.
-  function dodge(){
-    if (no.classList.contains('gave-up')) return;
-    if (dodges >= noLines.length){
-      no.textContent = 'Okay fine, yes';
-      no.classList.add('gave-up');
-      no.style.transform = '';
-      return;
-    }
-    no.textContent = noLines[dodges++];
-    if (reduce) return;
-    const dx = (Math.random()*2-1) * Math.min(110, innerWidth/4), dy = (Math.random()*2-1) * 28;
-    no.style.transform = `translate(${dx}px,${dy}px) rotate(${(Math.random()*20-10)}deg)`;
-  }
-  // Mouse: dodge on hover. Touch: hovering doesn't exist, so a tap dodges instead.
-  no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') dodge(); });
-  no.addEventListener('click', () => { if (no.classList.contains('gave-up')) sayYes(); else dodge(); });
-  yes.addEventListener('click', sayYes);
   function revealDays(){
-    document.getElementById('askBlock').hidden = true;
-    document.getElementById('saidYes').hidden = false;
-    document.getElementById('days').hidden = false;
-    renderDay('fri');
-  }
-  function sayYes(){
-    const [x,y] = centerOf(yes);
-    burst(x, y, ['♥','✦','♥','★'], 34);
-    store.set('magic-memory-yes','1');
-    revealDays();
+    renderDay(currentDay || 'fri');
+    const n = Object.values(DAYS).reduce((t, d) => t + (d.stops ? d.stops.length : 0), 0);
+    document.getElementById('rcCount').textContent = n;
   }
 
   /* ---------- Unlock ---------- */
@@ -792,7 +786,7 @@ body.sunny .link{color:#2c3e50}
   function showLetter(){
     lock.hidden = true; unfold.hidden = true; wrap.hidden = false;
     buildBouquet();
-    if (store.get('magic-memory-yes')) revealDays();
+    revealDays();
     scrollTo({top:0});
   }
   function unlock(){
@@ -811,10 +805,6 @@ body.sunny .link{color:#2c3e50}
     store.del('magic-memory-open'); store.del('magic-memory-yes'); store.del('magic-memory-key'); ticketURL = null;
     wrap.hidden = true; lock.hidden = false; lock.classList.remove('leave');
     env.classList.remove('open','rise');
-    document.getElementById('askBlock').hidden = false;
-    document.getElementById('saidYes').hidden = true;
-    document.getElementById('days').hidden = true;
-    no.style.transform = ''; no.textContent = 'No'; no.classList.remove('gave-up'); dodges = 0;
     opening = false; scrollTo({top:0});
   });
 
